@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Well4U Interactive Dodecahedron</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        #tooltip {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 280px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #tooltip.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        #tooltip-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 50%;
+            font-size: 20px;
+            line-height: 1;
+            color: #666;
+            cursor: pointer;
+            display: none;
+        }
+
+        #tooltip-close:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        #tooltip-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        #tooltip-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        #tooltip-color {
+            width: 40px;
+            height: 4px;
+            border-radius: 2px;
+            margin-bottom: 12px;
+        }
+
+        #tooltip-qr {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #eee;
+            text-align: center;
+        }
+
+        #tooltip-qr img {
+            width: 100px;
+            height: 100px;
+            display: block;
+            margin: 0 auto 8px;
+        }
+
+        #tooltip-qr span {
+            font-size: 11px;
+            color: #888;
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #555;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            #instructions {
+                font-size: 12px;
+                padding: 10px 18px;
+                bottom: 15px;
+                white-space: nowrap;
+            }
+
+            #tooltip {
+                position: fixed;
+                left: 50% !important;
+                bottom: 60px !important;
+                top: auto !important;
+                transform: translateX(-50%);
+                max-width: calc(100vw - 40px);
+                width: 300px;
+                padding: 16px;
+                padding-top: 20px;
+            }
+
+            #tooltip-close {
+                display: block;
+            }
+
+            #tooltip-title {
+                font-size: 17px;
+            }
+
+            #tooltip-description {
+                font-size: 13px;
+            }
+
+            #tooltip-qr {
+                margin-top: 12px;
+                padding-top: 12px;
+            }
+
+            #tooltip-qr img {
+                width: 90px;
+                height: 90px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #instructions {
+                font-size: 11px;
+                padding: 8px 16px;
+                bottom: 10px;
+            }
+
+            #tooltip {
+                width: calc(100vw - 30px);
+                max-width: 280px;
+                bottom: 50px !important;
+                padding: 14px;
+            }
+
+            #tooltip-title {
+                font-size: 16px;
+            }
+
+            #tooltip-description {
+                font-size: 12px;
+            }
+
+            #tooltip-qr img {
+                width: 80px;
+                height: 80px;
+            }
+
+            #tooltip-qr span {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-height: 500px) {
+            #tooltip {
+                bottom: auto !important;
+                top: 10px !important;
+                transform: translateX(-50%);
+            }
+
+            #instructions {
+                bottom: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="canvas-container"></div>
+        <div id="tooltip">
+            <button id="tooltip-close" aria-label="Close">&times;</button>
+            <div id="tooltip-color"></div>
+            <div id="tooltip-title"></div>
+            <div id="tooltip-description"></div>
+            <div id="tooltip-qr">
+                <img id="tooltip-qr-img" src="" alt="QR Code">
+                <span>Scan for resources</span>
+            </div>
+        </div>
+        <div id="instructions">Drag to rotate | Tap a face to explore</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Theme data for 12 faces (URLs are placeholders - replace with actual links)
+        const themes = [
+            { name: "Stress Management", color: "#4CAF50", description: "Techniques and strategies to handle stress effectively", url: "https://www.google.com" },
+            { name: "Identity & Belonging", color: "#F9A825", description: "Exploring who you are and finding your place", url: "https://www.google.com" },
+            { name: "Staying Connected", color: "#7E57C2", description: "Building and maintaining meaningful relationships", url: "https://www.google.com" },
+            { name: "Bounce Back", color: "#E57373", description: "Developing resilience to overcome challenges", url: "https://www.google.com" },
+            { name: "Diversity & Inclusion", color: "#26A69A", description: "Celebrating differences and creating inclusive spaces", url: "https://www.google.com" },
+            { name: "Social Media & Screen Use", color: "#EC407A", description: "Healthy habits for digital wellbeing", url: "https://www.google.com" },
+            { name: "Bullying & Cyberbullying", color: "#42A5F5", description: "Recognizing, preventing, and responding to bullying", url: "https://www.google.com" },
+            { name: "Fun Randomiser Q", color: "#FFCA28", description: "Lighthearted questions to spark conversation", url: "https://www.google.com" },
+            { name: "Safety & Wellbeing", color: "#5C6BC0", description: "Staying safe physically and emotionally", url: "https://www.google.com" },
+            { name: "Confidence", color: "#9CCC65", description: "Building self-belief and positive self-image", url: "https://www.google.com" },
+            { name: "Gratitude", color: "#26C6DA", description: "Practicing thankfulness for improved wellbeing", url: "https://www.google.com" },
+            { name: "Growth & Goal Setting", color: "#FF7043", description: "Setting and achieving personal goals", url: "https://www.google.com" }
+        ];
+
+        // Scene setup
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xf5f7fa);
+
+        // Camera - adjust for screen size
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        function updateCameraPosition() {
+            const isMobile = window.innerWidth <= 768;
+            const isSmallMobile = window.innerWidth <= 480;
+            const isLandscape = window.innerWidth > window.innerHeight;
+
+            if (isSmallMobile) {
+                camera.position.z = isLandscape ? 6 : 7;
+            } else if (isMobile) {
+                camera.position.z = isLandscape ? 5.5 : 6.5;
+            } else {
+                camera.position.z = 6;
+            }
+        }
+        updateCameraPosition();
+
+        // Renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
+        directionalLight2.position.set(-5, -5, -5);
+        scene.add(directionalLight2);
+
+        // Create a text texture for a face (title only)
+        function createFaceTexture(title, bgColor) {
+            const canvas = document.createElement('canvas');
+            const size = 1024; // Higher resolution for crisp text
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Fill background
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+
+            // Add subtle shading for depth
+            const gradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            gradient.addColorStop(0, 'rgba(255,255,255,0.08)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0.12)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Draw title (wrap text if needed)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.font = 'bold 56px Arial, sans-serif'; // Smaller relative to canvas
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const words = title.split(' ');
+            let lines = [];
+            let currentLine = '';
+
+            for (let word of words) {
+                const testLine = currentLine + (currentLine ? ' ' : '') + word;
+                const metrics = ctx.measureText(testLine);
+                if (metrics.width > size * 0.5 && currentLine) { // Narrower text area
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine);
+
+            // Draw each line centered vertically
+            const lineHeight = 68;
+            const totalHeight = lines.length * lineHeight;
+            const startY = size/2 - totalHeight/2 + lineHeight/2;
+
+            lines.forEach((line, i) => {
+                ctx.fillText(line, size/2, startY + i * lineHeight);
+            });
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.anisotropy = 16;
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        // Create dodecahedron with textured faces
+        function createDodecahedron() {
+            const radius = 1.5;
+            const geometry = new THREE.DodecahedronGeometry(radius, 0);
+
+            // Convert to non-indexed geometry
+            const nonIndexedGeometry = geometry.toNonIndexed();
+            const positions = nonIndexedGeometry.attributes.position;
+            const count = positions.count;
+
+            // A dodecahedron has 12 pentagonal faces
+            // Each pentagon is made of 3 triangles = 9 vertices
+            const verticesPerFace = 9;
+
+            // Calculate face centers and normals
+            const faceCenters = [];
+            const faceNormals = [];
+
+            for (let face = 0; face < 12; face++) {
+                let centerX = 0, centerY = 0, centerZ = 0;
+                const startIdx = face * verticesPerFace;
+
+                for (let i = 0; i < verticesPerFace; i++) {
+                    centerX += positions.getX(startIdx + i);
+                    centerY += positions.getY(startIdx + i);
+                    centerZ += positions.getZ(startIdx + i);
+                }
+
+                const center = new THREE.Vector3(
+                    centerX / verticesPerFace,
+                    centerY / verticesPerFace,
+                    centerZ / verticesPerFace
+                );
+
+                faceCenters.push(center.clone());
+                faceNormals.push(center.clone().normalize());
+            }
+
+            // Create materials for each face with textures
+            const materials = themes.map((theme) => {
+                const texture = createFaceTexture(theme.name, theme.color);
+                return new THREE.MeshLambertMaterial({
+                    map: texture,
+                    side: THREE.FrontSide
+                });
+            });
+
+            // Assign material indices to faces
+            const groups = [];
+            for (let face = 0; face < 12; face++) {
+                // Each face has 3 triangles = 9 vertices = 3 "faces" in Three.js terms
+                groups.push({
+                    start: face * 9,
+                    count: 9,
+                    materialIndex: face
+                });
+            }
+
+            // Clear existing groups and add new ones
+            nonIndexedGeometry.clearGroups();
+            groups.forEach(g => {
+                nonIndexedGeometry.addGroup(g.start, g.count, g.materialIndex);
+            });
+
+            // Create UV coordinates for the faces
+            const uvs = new Float32Array(count * 2);
+
+            for (let face = 0; face < 12; face++) {
+                const startIdx = face * verticesPerFace;
+                const faceCenter = faceCenters[face];
+                const normal = faceNormals[face];
+
+                // Create a local coordinate system for UV mapping
+                const up = new THREE.Vector3(0, 1, 0);
+                if (Math.abs(normal.dot(up)) > 0.9) {
+                    up.set(1, 0, 0);
+                }
+                const tangent = new THREE.Vector3().crossVectors(up, normal).normalize();
+                const bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+
+                for (let i = 0; i < verticesPerFace; i++) {
+                    const idx = startIdx + i;
+                    const vertex = new THREE.Vector3(
+                        positions.getX(idx),
+                        positions.getY(idx),
+                        positions.getZ(idx)
+                    );
+
+                    // Project vertex onto face plane
+                    const localPos = vertex.clone().sub(faceCenter);
+                    const u = 0.5 + localPos.dot(tangent) * 0.4;
+                    const v = 0.5 + localPos.dot(bitangent) * 0.4;
+
+                    uvs[idx * 2] = u;
+                    uvs[idx * 2 + 1] = v;
+                }
+            }
+
+            nonIndexedGeometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+
+            const mesh = new THREE.Mesh(nonIndexedGeometry, materials);
+            mesh.userData.faceCenters = faceCenters;
+            mesh.userData.faceNormals = faceNormals;
+
+            return mesh;
+        }
+
+        const dodecahedron = createDodecahedron();
+        scene.add(dodecahedron);
+
+        // Rotation controls
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let autoRotate = true;
+        let rotationVelocity = { x: 0, y: 0 };
+        let lastInteractionTime = Date.now();
+        const autoRotateDelay = 2000; // Resume auto-rotate after 2s of inactivity
+
+        // Mouse events
+        renderer.domElement.addEventListener('mousedown', onPointerDown);
+        renderer.domElement.addEventListener('mousemove', onPointerMove);
+        renderer.domElement.addEventListener('mouseup', onPointerUp);
+        renderer.domElement.addEventListener('mouseleave', onPointerUp);
+
+        // Touch events
+        renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+        renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+        renderer.domElement.addEventListener('touchend', onTouchEnd);
+
+        function onPointerDown(event) {
+            isDragging = true;
+            autoRotate = false;
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+        }
+
+        function onPointerMove(event) {
+            if (!isDragging) return;
+
+            const deltaX = event.clientX - previousMousePosition.x;
+            const deltaY = event.clientY - previousMousePosition.y;
+
+            rotationVelocity.x = deltaY * 0.005;
+            rotationVelocity.y = deltaX * 0.005;
+
+            dodecahedron.rotation.x += rotationVelocity.x;
+            dodecahedron.rotation.y += rotationVelocity.y;
+
+            previousMousePosition = {
+                x: event.clientX,
+                y: event.clientY
+            };
+
+            lastInteractionTime = Date.now();
+        }
+
+        function onPointerUp() {
+            isDragging = false;
+            lastInteractionTime = Date.now();
+        }
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                event.preventDefault();
+                isDragging = true;
+                autoRotate = false;
+                previousMousePosition = {
+                    x: event.touches[0].clientX,
+                    y: event.touches[0].clientY
+                };
+            }
+        }
+
+        function onTouchMove(event) {
+            if (!isDragging || event.touches.length !== 1) return;
+            event.preventDefault();
+
+            const deltaX = event.touches[0].clientX - previousMousePosition.x;
+            const deltaY = event.touches[0].clientY - previousMousePosition.y;
+
+            rotationVelocity.x = deltaY * 0.005;
+            rotationVelocity.y = deltaX * 0.005;
+
+            dodecahedron.rotation.x += rotationVelocity.x;
+            dodecahedron.rotation.y += rotationVelocity.y;
+
+            previousMousePosition = {
+                x: event.touches[0].clientX,
+                y: event.touches[0].clientY
+            };
+
+            lastInteractionTime = Date.now();
+        }
+
+        function onTouchEnd() {
+            isDragging = false;
+            lastInteractionTime = Date.now();
+        }
+
+        // Click/tap detection with raycasting
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let clickStartPosition = { x: 0, y: 0 };
+        let clickStartTime = 0;
+
+        renderer.domElement.addEventListener('mousedown', (event) => {
+            clickStartPosition = { x: event.clientX, y: event.clientY };
+            clickStartTime = Date.now();
+        });
+
+        renderer.domElement.addEventListener('mouseup', (event) => {
+            const dx = event.clientX - clickStartPosition.x;
+            const dy = event.clientY - clickStartPosition.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const duration = Date.now() - clickStartTime;
+
+            // Only register as click if minimal movement and quick tap
+            if (distance < 10 && duration < 300) {
+                handleClick(event.clientX, event.clientY);
+            }
+        });
+
+        renderer.domElement.addEventListener('touchstart', (event) => {
+            if (event.touches.length === 1) {
+                clickStartPosition = {
+                    x: event.touches[0].clientX,
+                    y: event.touches[0].clientY
+                };
+                clickStartTime = Date.now();
+            }
+        });
+
+        renderer.domElement.addEventListener('touchend', (event) => {
+            if (event.changedTouches.length === 1) {
+                const touch = event.changedTouches[0];
+                const dx = touch.clientX - clickStartPosition.x;
+                const dy = touch.clientY - clickStartPosition.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const duration = Date.now() - clickStartTime;
+
+                if (distance < 20 && duration < 300) {
+                    handleClick(touch.clientX, touch.clientY);
+                }
+            }
+        });
+
+        function handleClick(clientX, clientY) {
+            mouse.x = (clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(dodecahedron);
+
+            if (intersects.length > 0) {
+                const faceIndex = Math.floor(intersects[0].faceIndex / 3);
+                showTooltip(faceIndex, clientX, clientY);
+            } else {
+                hideTooltip();
+            }
+        }
+
+        // Tooltip
+        const tooltip = document.getElementById('tooltip');
+        const tooltipTitle = document.getElementById('tooltip-title');
+        const tooltipDescription = document.getElementById('tooltip-description');
+        const tooltipColor = document.getElementById('tooltip-color');
+        const tooltipQrImg = document.getElementById('tooltip-qr-img');
+
+        function showTooltip(faceIndex, x, y) {
+            const theme = themes[faceIndex];
+
+            tooltipTitle.textContent = theme.name;
+            tooltipDescription.textContent = theme.description;
+            tooltipColor.style.backgroundColor = theme.color;
+
+            // Set QR code (using QR Server API)
+            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(theme.url)}`;
+            tooltipQrImg.src = qrUrl;
+
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                // On mobile, CSS handles positioning (centered at bottom)
+                tooltip.style.left = '';
+                tooltip.style.top = '';
+            } else {
+                // Desktop: position near click
+                const tooltipWidth = 280;
+                const tooltipHeight = 260;
+                const padding = 20;
+
+                let posX = x + 15;
+                let posY = y + 15;
+
+                // Keep tooltip in viewport
+                if (posX + tooltipWidth > window.innerWidth - padding) {
+                    posX = x - tooltipWidth - 15;
+                }
+                if (posY + tooltipHeight > window.innerHeight - padding) {
+                    posY = y - tooltipHeight - 15;
+                }
+                if (posX < padding) posX = padding;
+                if (posY < padding) posY = padding;
+
+                tooltip.style.left = posX + 'px';
+                tooltip.style.top = posY + 'px';
+            }
+
+            tooltip.classList.add('visible');
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+        }
+
+        // Close button for tooltip (both click and touch)
+        const closeBtn = document.getElementById('tooltip-close');
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            hideTooltip();
+        });
+        closeBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            hideTooltip();
+        });
+
+        // Click outside to hide tooltip
+        document.addEventListener('click', (event) => {
+            if (!renderer.domElement.contains(event.target) &&
+                !tooltip.contains(event.target)) {
+                hideTooltip();
+            }
+        });
+
+        // Handle window resize
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            updateCameraPosition();
+        }
+        window.addEventListener('resize', onWindowResize);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(onWindowResize, 100);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Check if should resume auto-rotate
+            if (!isDragging && Date.now() - lastInteractionTime > autoRotateDelay) {
+                autoRotate = true;
+            }
+
+            // Auto-rotation (slow gentle spin)
+            if (autoRotate) {
+                dodecahedron.rotation.y += 0.001;
+                dodecahedron.rotation.x += 0.0003;
+            } else if (!isDragging) {
+                // Apply damping to velocity
+                rotationVelocity.x *= 0.95;
+                rotationVelocity.y *= 0.95;
+
+                dodecahedron.rotation.x += rotationVelocity.x;
+                dodecahedron.rotation.y += rotationVelocity.y;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        console.log('Well4U Dodecahedron initialized');
+    </script>
+</body>
+</html>

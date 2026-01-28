@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curved Lines Section</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .spacer {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .section-container {
+            background: linear-gradient(135deg, #f0e6f6 0%, #e8e0f0 50%, #dde8f0 100%);
+            padding: 60px 40px 80px;
+            width: 100%;
+            max-width: 1320px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .hierarchy-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .parent-card {
+            background: radial-gradient(ellipse at 131% 151%, rgba(135, 29, 255, 0.2) 0%, rgba(255, 255, 255, 1) 100%);
+            width: 350px;
+            height: 121px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 35px;
+            box-shadow:
+                20px 4px 81.9px 1px hsla(217, 100%, 34%, 0.15),
+                -10px -16px 120.6px -10px hsla(268, 86%, 74%, 0.3);
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a1a2e;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .lines-svg {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 220px;
+            z-index: 1;
+        }
+
+        .line-gray {
+            fill: none;
+            stroke: hsla(0, 0%, 75%, 0.5);
+            stroke-width: 1;
+            stroke-dasharray: 6, 6;
+        }
+
+        .line-colored {
+            fill: none;
+            stroke: hsla(268, 86%, 74%, 1);
+            stroke-width: 1;
+            stroke-dasharray: 6, 6;
+        }
+
+        .line-group-colored {
+            clip-path: inset(0 0 100% 0);
+            transition: clip-path 0.8s ease-out;
+        }
+
+        .line-group-colored.animate {
+            clip-path: inset(0 0 0% 0);
+        }
+
+        .line-group-colored:nth-child(4) { transition-delay: 0s; }
+        .line-group-colored:nth-child(5) { transition-delay: 0.15s; }
+        .line-group-colored:nth-child(6) { transition-delay: 0.3s; }
+
+        .children-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1000px;
+            margin-top: 200px;
+            gap: 20px;
+        }
+
+        .child-card {
+            background: hsla(0, 0%, 100%, 0.32);
+            border: 1px solid hsla(0, 0%, 100%, 1);
+            width: 300px;
+            height: 121px;
+            border-radius: 33px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 20px;
+            color: #3a3a4a;
+            padding: 0 20px;
+        }
+
+        @media (max-width: 768px) {
+            .section-container {
+                padding: 40px 20px 60px;
+            }
+
+            .children-container {
+                flex-direction: column;
+                align-items: center;
+                margin-top: 40px;
+            }
+
+            .child-card {
+                max-width: 280px;
+            }
+
+            .lines-svg {
+                display: none;
+            }
+
+            .children-container::before {
+                content: '';
+                position: absolute;
+                top: 60px;
+                left: 50%;
+                width: 2px;
+                height: calc(100% - 80px);
+                background: linear-gradient(to bottom, #b8a5c8 50%, transparent 50%);
+                background-size: 2px 8px;
+                opacity: 0.7;
+            }
+
+            .hierarchy-wrapper {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="spacer">Scroll down</div>
+    <section class="section-container">
+        <div class="hierarchy-wrapper">
+            <div class="parent-card">QUI NON DEVI:</div>
+
+            <svg class="lines-svg" viewBox="0 0 1000 220" preserveAspectRatio="xMidYMid meet">
+                <!-- Gray base lines (always visible) -->
+                <path class="line-gray" d="M 500 0 Q 500 110, 150 215" />
+                <path class="line-gray" d="M 500 0 Q 500 100, 500 215" />
+                <path class="line-gray" d="M 500 0 Q 500 110, 850 215" />
+
+                <!-- Colored overlay lines (animated) -->
+                <g class="line-group-colored">
+                    <path class="line-colored" d="M 500 0 Q 500 110, 150 215" />
+                </g>
+                <g class="line-group-colored">
+                    <path class="line-colored" d="M 500 0 Q 500 100, 500 215" />
+                </g>
+                <g class="line-group-colored">
+                    <path class="line-colored" d="M 500 0 Q 500 110, 850 215" />
+                </g>
+            </svg>
+
+            <div class="children-container">
+                <div class="child-card">Capire tutto da solo</div>
+                <div class="child-card">Decidere ogni settimana cosa fare</div>
+                <div class="child-card">Sperare di "aver interpretato bene" le lezioni</div>
+            </div>
+        </div>
+    </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const lineGroups = document.querySelectorAll('.line-group-colored');
+            const section = document.querySelector('.section-container');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Scrolling into view - add color
+                        lineGroups.forEach(group => {
+                            group.classList.add('animate');
+                        });
+                    } else {
+                        // Scrolling out of view - remove color
+                        lineGroups.forEach(group => {
+                            group.classList.remove('animate');
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.3
+            });
+
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
