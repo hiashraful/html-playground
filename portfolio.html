@@ -34,6 +34,25 @@
             box-sizing: border-box;
         }
 
+        /* Fallback font metrics to prevent CLS */
+        @font-face {
+            font-family: 'Inter Fallback';
+            src: local('Arial');
+            ascent-override: 90%;
+            descent-override: 25%;
+            line-gap-override: 0%;
+            size-adjust: 107%;
+        }
+
+        @font-face {
+            font-family: 'Space Mono Fallback';
+            src: local('Courier New');
+            ascent-override: 85%;
+            descent-override: 25%;
+            line-gap-override: 0%;
+            size-adjust: 110%;
+        }
+
         :root {
             --bg-primary: #0a0a0a;
             --bg-secondary: #111111;
@@ -45,8 +64,8 @@
             --accent-light: #60a5fa;
             --accent-dark: #1d4ed8;
             --accent-dim: #1e3a5f;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            --font-mono: 'Space Mono', monospace;
+            --font-sans: 'Inter', 'Inter Fallback', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'Space Mono', 'Space Mono Fallback', monospace;
         }
 
         html {
@@ -684,7 +703,7 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(40px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -693,13 +712,11 @@
         }
 
         .animate-in {
-            animation: fadeInUp 0.8s ease forwards;
+            animation: fadeInUp 0.4s ease forwards;
         }
 
-        .delay-1 { animation-delay: 0.1s; }
-        .delay-2 { animation-delay: 0.2s; }
-        .delay-3 { animation-delay: 0.3s; }
-        .delay-4 { animation-delay: 0.4s; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
 
         /* Scroll animations */
         .animate-on-scroll {
@@ -944,10 +961,10 @@
                 <div class="line-2 animate-in delay-2"><span class="outline">DEVELOPER</span></div>
             </h1>
 
-            <p class="hero-subtitle animate-in delay-3">Dev Ash / Bangladesh</p>
+            <p class="hero-subtitle animate-in delay-2">Dev Ash / Bangladesh</p>
         </div>
 
-        <p class="hero-description animate-in delay-4">
+        <p class="hero-description animate-in">
             I build AI into real products, not just demos. From WordPress plugins to cross-platform apps, I ship solutions that actually work. Web, mobile, desktop - whatever it takes to solve the problem.
         </p>
 
@@ -1359,10 +1376,21 @@
             requestAnimationFrame(animate);
         }
 
-        // Initialize
+        // Initialize - defer particle animation to not block LCP
         resizeCanvas();
-        createParticles();
-        animate();
+
+        // Start animation after LCP (defer to idle time)
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                createParticles();
+                animate();
+            }, { timeout: 100 });
+        } else {
+            setTimeout(() => {
+                createParticles();
+                animate();
+            }, 50);
+        }
 
         let resizeTimeout;
         window.addEventListener('resize', () => {
