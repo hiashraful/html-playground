@@ -1,0 +1,749 @@
+<style>
+.w4u-cube-section {
+    width: 100%;
+    min-height: 600px;
+    height: 80vh;
+    max-height: 900px;
+    position: relative;
+    background: transparent;
+    overflow: hidden;
+}
+.w4u-cube-section * { box-sizing: border-box; }
+.w4u-cube-canvas { width: 100%; height: 100%; touch-action: none; }
+.w4u-cube-tooltip {
+    position: absolute;
+    background: linear-gradient(145deg, #ffffff 0%, #f5f7fa 50%, #e8ecf1 100%);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    width: 240px;
+    max-width: 240px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+    font-family: 'Manrope', sans-serif;
+}
+.w4u-cube-tooltip.visible { opacity: 1; visibility: visible; pointer-events: auto; }
+.w4u-cube-tooltip-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #ffffff;
+    border-radius: 50%;
+    font-size: 22px;
+    line-height: 1;
+    color: #000;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font-weight: 700;
+}
+.w4u-cube-tooltip-close:hover { background: #f0f0f0; }
+.w4u-cube-tooltip-number {
+    width: 44px;
+    height: 44px;
+    border: 3px solid rgba(51,51,51,0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 auto 16px auto;
+    background: transparent;
+}
+.w4u-cube-tooltip-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+}
+.w4u-cube-tooltip-description {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.w4u-cube-tooltip-qr {
+    background: rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+}
+.w4u-cube-tooltip-qr img {
+    width: 80px;
+    height: 80px;
+    display: block;
+    margin: 0 auto 6px;
+    border-radius: 4px;
+}
+.w4u-cube-tooltip-qr span { font-size: 10px; color: #555; }
+.w4u-cube-instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    padding: 10px 20px;
+    border-radius: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    box-shadow: none;
+    font-family: 'Manrope', sans-serif;
+}
+.w4u-cube-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    color: #666;
+}
+@media (max-width: 768px) {
+    .w4u-cube-section {
+        min-height: 400px;
+        height: 55vh;
+        max-height: 500px;
+        overflow: visible;
+        isolation: isolate;
+        position: relative;
+        z-index: 1;
+    }
+    .w4u-cube-canvas {
+        height: 100%;
+        touch-action: manipulation;
+    }
+    .w4u-cube-instructions { font-size: 13px; padding: 8px 16px; bottom: 15px; white-space: nowrap; z-index: 50; background: transparent; color: #333; box-shadow: none; }
+    .w4u-cube-tooltip {
+        position: fixed !important;
+        top: 50% !important;
+        bottom: auto !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translate(-50%, -50%);
+        max-width: calc(100vw - 32px);
+        width: 340px;
+        padding: 24px;
+        z-index: 999999;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+        border-radius: 20px;
+    }
+    .w4u-cube-tooltip-close { display: block; background: #ffffff; color: #000; width: 36px; height: 36px; font-size: 24px; top: 12px; right: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    .w4u-cube-tooltip-number { width: 44px; height: 44px; font-size: 20px; margin-bottom: 14px; border-width: 2px; }
+    .w4u-cube-tooltip-title { font-size: 16px; margin-bottom: 10px; }
+    .w4u-cube-tooltip-description { font-size: 14px; margin-bottom: 14px; line-height: 1.5; }
+    .w4u-cube-tooltip-qr { padding: 14px; }
+    .w4u-cube-tooltip-qr img { width: 90px; height: 90px; }
+    .w4u-cube-tooltip-qr span { font-size: 10px; }
+}
+.w4u-cube-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 999998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.w4u-cube-backdrop.visible {
+    opacity: 1;
+    visibility: visible;
+}
+@media (max-width: 768px) {
+    .w4u-cube-backdrop { display: block; }
+}
+@media (max-width: 480px) {
+    .w4u-cube-section { min-height: 350px; height: 50vh; max-height: 450px; }
+    .w4u-cube-canvas { height: 100%; }
+    .w4u-cube-instructions { font-size: 12px; padding: 6px 12px; bottom: 10px; background: transparent; color: #333; box-shadow: none; }
+    .w4u-cube-tooltip {
+        width: calc(100vw - 24px);
+        max-width: 320px;
+        padding: 20px;
+    }
+    .w4u-cube-tooltip-close { width: 34px; height: 34px; font-size: 22px; }
+    .w4u-cube-tooltip-number { width: 40px; height: 40px; font-size: 18px; margin-bottom: 12px; }
+    .w4u-cube-tooltip-title { font-size: 15px; margin-bottom: 8px; }
+    .w4u-cube-tooltip-description { font-size: 13px; margin-bottom: 12px; line-height: 1.4; }
+    .w4u-cube-tooltip-qr { padding: 12px; }
+    .w4u-cube-tooltip-qr img { width: 80px; height: 80px; margin-bottom: 6px; }
+    .w4u-cube-tooltip-qr span { font-size: 10px; }
+}
+</style>
+
+<div class="w4u-cube-backdrop" id="w4u-cube-backdrop"></div>
+<div class="w4u-cube-section" id="w4u-cube-section">
+    <div class="w4u-cube-canvas" id="w4u-cube-canvas"></div>
+    <div class="w4u-cube-tooltip" id="w4u-cube-tooltip">
+        <button class="w4u-cube-tooltip-close" id="w4u-cube-tooltip-close">&times;</button>
+        <div class="w4u-cube-tooltip-number" id="w4u-cube-tooltip-number"></div>
+        <div class="w4u-cube-tooltip-title" id="w4u-cube-tooltip-title"></div>
+        <div class="w4u-cube-tooltip-description" id="w4u-cube-tooltip-description"></div>
+        <div class="w4u-cube-tooltip-qr">
+            <img id="w4u-cube-tooltip-qr-img" src="" alt="QR Code">
+            <span>Scan for resources</span>
+        </div>
+    </div>
+    <div class="w4u-cube-instructions" id="w4u-cube-instructions">Drag to rotate | Tap a face to explore</div>
+    <div class="w4u-cube-loading" id="w4u-cube-loading">Loading 3D viewer...</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    var fontLink = document.createElement('link');
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap';
+    fontLink.rel = 'stylesheet';
+    document.head.appendChild(fontLink);
+
+    function waitForFont(fontName, callback) {
+        var testEl = document.createElement('span');
+        testEl.style.cssText = 'position:absolute;left:-9999px;font-family:"' + fontName + '";font-size:48px;font-weight:700;';
+        testEl.textContent = 'Test Font Loading';
+        document.body.appendChild(testEl);
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function() {
+                document.fonts.load('700 48px "' + fontName + '"').then(function() {
+                    setTimeout(function() {
+                        document.body.removeChild(testEl);
+                        callback();
+                    }, 100);
+                }).catch(function() {
+                    document.body.removeChild(testEl);
+                    callback();
+                });
+            });
+        } else {
+            setTimeout(function() {
+                document.body.removeChild(testEl);
+                callback();
+            }, 1000);
+        }
+    }
+
+    function loadThreeJS(callback) {
+        if (typeof THREE !== 'undefined') { callback(); return; }
+        var script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        script.onload = callback;
+        script.onerror = function() {
+            var loading = document.getElementById('w4u-cube-loading');
+            if (loading) loading.textContent = 'Failed to load 3D library. Please refresh the page.';
+        };
+        document.head.appendChild(script);
+    }
+
+    function initCube() {
+        var loading = document.getElementById('w4u-cube-loading');
+        if (loading) loading.style.display = 'none';
+
+        // ── CONFIGURATION ─────────────────────────────────────────────
+        // BoxGeometry face order: [+x right, -x left, +y top, -y bottom, +z front, -z back]
+        // Set the "image" field to a URL to display an image on that face.
+        // If "image" is empty, a canvas texture with the number & title is generated as fallback.
+        var themes = [
+            { name: "Take 3 slow breaths",  color: "#3c9a7e", description: "Take 3 slow breaths", url: "https://well4ukit.co.uk/1", image: "https://well4ukit.co.uk/wp-content/uploads/breathing.png" },
+            { name: "How are you feeling right now?",  color: "#7b6ba4", description: "How are you feeling right now?", url: "https://well4ukit.co.uk/2", image: "https://well4ukit.co.uk/wp-content/uploads/question-mark-1.png" },
+            { name: "Do a quick body reset",  color: "#f5a623", description: "Do a quick body reset, shake out and stretch.", url: "https://well4ukit.co.uk/3", image: "https://well4ukit.co.uk/wp-content/uploads/footsteps.png" },
+            { name: "Take turns listening",  color: "#5ab89e", description: "Take turns, one person talks and one person listens", url: "https://well4ukit.co.uk/4", image: "https://well4ukit.co.uk/wp-content/uploads/ear.png" },
+            { name: "One small next step",  color: "#5d5087", description: "What's one small next step you can take?", url: "https://well4ukit.co.uk/5", image: "https://well4ukit.co.uk/wp-content/uploads/puzzle.png" },
+            { name: "One kind thing today",  color: "#5b8ec4", description: "What's one kind thing you can do today?", url: "https://well4ukit.co.uk/6", image: "https://well4ukit.co.uk/wp-content/uploads/laughing.png" }
+        ];
+        // ── END CONFIGURATION ─────────────────────────────────────────
+
+        var container = document.getElementById('w4u-cube-canvas');
+        var section = document.getElementById('w4u-cube-section');
+        if (!container || !section) return;
+
+        var containerWidth = container.offsetWidth;
+        var containerHeight = container.offsetHeight;
+
+        var scene = new THREE.Scene();
+        scene.background = null;
+
+        var camera = new THREE.PerspectiveCamera(50, containerWidth / containerHeight, 0.1, 1000);
+
+        function updateCameraPosition() {
+            var isMobile = window.innerWidth <= 768;
+            var isSmallMobile = window.innerWidth <= 480;
+            var isLandscape = containerWidth > containerHeight;
+            if (isSmallMobile) camera.position.z = isLandscape ? 5 : 6;
+            else if (isMobile) camera.position.z = isLandscape ? 4.5 : 5.5;
+            else camera.position.z = 4.8;
+        }
+        updateCameraPosition();
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(containerWidth, containerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+        scene.add(ambientLight);
+
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        var directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+        directionalLight2.position.set(-5, -5, -5);
+        scene.add(directionalLight2);
+
+        function createCanvasTexture(number, title, bgColor, imageUrl) {
+            var canvas = document.createElement('canvas');
+            var size = 1024;
+            canvas.width = size;
+            canvas.height = size;
+            var ctx = canvas.getContext('2d');
+
+            function drawBackground() {
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, size, size);
+
+                var gradient = ctx.createRadialGradient(size * 0.3, size * 0.3, 0, size / 2, size / 2, size * 0.7);
+                gradient.addColorStop(0, 'rgba(255,255,255,0.12)');
+                gradient.addColorStop(0.5, 'rgba(255,255,255,0.05)');
+                gradient.addColorStop(1, 'rgba(0,0,0,0.15)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+
+                for (var i = 0; i < 3000; i++) {
+                    var x = Math.random() * size;
+                    var y = Math.random() * size;
+                    var alpha = Math.random() * 0.03;
+                    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,' + alpha + ')' : 'rgba(0,0,0,' + alpha + ')';
+                    ctx.fillRect(x, y, 1, 1);
+                }
+            }
+
+            function drawText(hasImage) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                if (hasImage) {
+                    // Number at top
+                    ctx.font = 'bold 100px "Manrope", sans-serif';
+                    ctx.fillText(number.toString(), size / 2, 155);
+
+                    // Title at bottom
+                    ctx.font = 'bold 46px "Manrope", sans-serif';
+                } else {
+                    // No image: original centered layout
+                    ctx.font = 'bold 200px "Manrope", sans-serif';
+                    ctx.fillText(number.toString(), size / 2, size / 2 - 60);
+                    ctx.font = 'bold 56px "Manrope", sans-serif';
+                }
+
+                var maxWidth = hasImage ? size * 0.8 : size * 0.7;
+                var words = title.split(' ');
+                var lines = [];
+                var currentLine = '';
+                for (var j = 0; j < words.length; j++) {
+                    var word = words[j];
+                    var testLine = currentLine + (currentLine ? ' ' : '') + word;
+                    if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+                        lines.push(currentLine);
+                        currentLine = word;
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                lines.push(currentLine);
+
+                var lineHeight = hasImage ? 54 : 66;
+                var startY = hasImage ? (size - 190 - (lines.length - 1) * lineHeight / 2) : (size / 2 + 90);
+                for (var k = 0; k < lines.length; k++) {
+                    ctx.fillText(lines[k], size / 2, startY + k * lineHeight);
+                }
+            }
+
+            drawBackground();
+            drawText(!!imageUrl);
+
+            var texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.anisotropy = 16;
+            texture.needsUpdate = true;
+
+            if (imageUrl) {
+                var img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    drawBackground();
+                    var imgSize = 500;
+                    var imgX = (size - imgSize) / 2;
+                    var imgY = (size - imgSize) / 2;
+                    ctx.drawImage(img, imgX, imgY, imgSize, imgSize);
+                    drawText(true);
+                    texture.needsUpdate = true;
+                };
+                img.src = imageUrl;
+            }
+
+            return texture;
+        }
+
+        // Rounded box geometry: inflates a subdivided box so edges & corners are smooth
+        var cubeSize = 1.88;
+        var cubeRadius = 0.25;
+        var cubeSegments = 24;
+
+        function createRoundedBoxGeometry(w, h, d, radius, segments) {
+            var geometry = new THREE.BoxGeometry(w, h, d, segments, segments, segments);
+            var pos = geometry.attributes.position;
+            var nor = geometry.attributes.normal;
+            var hw = w / 2 - radius;
+            var hh = h / 2 - radius;
+            var hd = d / 2 - radius;
+
+            for (var i = 0; i < pos.count; i++) {
+                var x = pos.getX(i);
+                var y = pos.getY(i);
+                var z = pos.getZ(i);
+                var cx = Math.max(-hw, Math.min(hw, x));
+                var cy = Math.max(-hh, Math.min(hh, y));
+                var cz = Math.max(-hd, Math.min(hd, z));
+                var dx = x - cx;
+                var dy = y - cy;
+                var dz = z - cz;
+                var dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (dist > 1e-6) {
+                    pos.setXYZ(i, cx + (dx / dist) * radius, cy + (dy / dist) * radius, cz + (dz / dist) * radius);
+                    nor.setXYZ(i, dx / dist, dy / dist, dz / dist);
+                }
+            }
+            pos.needsUpdate = true;
+            nor.needsUpdate = true;
+            geometry.computeBoundingSphere();
+            return geometry;
+        }
+
+        // Build materials: canvas texture with colored bg, optional icon overlay
+        var materials = themes.map(function(theme, idx) {
+            var texture = createCanvasTexture(idx + 1, theme.name, theme.color, theme.image);
+            return new THREE.MeshLambertMaterial({ map: texture, side: THREE.FrontSide });
+        });
+
+        var geometry = createRoundedBoxGeometry(cubeSize, cubeSize, cubeSize, cubeRadius, cubeSegments);
+        var cube = new THREE.Mesh(geometry, materials);
+        scene.add(cube);
+
+        // Triangles per face for subdivided box (needed for raycasting)
+        var trianglesPerFace = cubeSegments * cubeSegments * 2;
+
+        // Face normals for BoxGeometry group order: +x, -x, +y, -y, +z, -z
+        var faceNormals = [
+            new THREE.Vector3(1, 0, 0),
+            new THREE.Vector3(-1, 0, 0),
+            new THREE.Vector3(0, 1, 0),
+            new THREE.Vector3(0, -1, 0),
+            new THREE.Vector3(0, 0, 1),
+            new THREE.Vector3(0, 0, -1)
+        ];
+
+        // Precompute target quaternions for each face to face the camera upright
+        var faceTargetQuaternions = faceNormals.map(function(normal) {
+            return new THREE.Quaternion().setFromUnitVectors(normal, new THREE.Vector3(0, 0, 1));
+        });
+
+        var isDragging = false;
+        var previousMousePosition = { x: 0, y: 0 };
+        var autoRotate = true;
+        var rotationVelocity = { x: 0, y: 0 };
+        var lastInteractionTime = Date.now();
+        var autoRotateDelay = 3000;
+
+        var targetQuaternion = new THREE.Quaternion();
+        var isAnimatingToFace = false;
+        var animationSpeed = 0.08;
+
+        function rotateFaceToCamera(faceIndex) {
+            targetQuaternion.copy(faceTargetQuaternions[faceIndex]);
+            isAnimatingToFace = true;
+            autoRotate = false;
+        }
+
+        function onPointerDown(event) {
+            isDragging = true;
+            autoRotate = false;
+            isAnimatingToFace = false;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        }
+
+        function onPointerMove(event) {
+            if (!isDragging) return;
+            isAnimatingToFace = false;
+            var deltaX = event.clientX - previousMousePosition.x;
+            var deltaY = event.clientY - previousMousePosition.y;
+            rotationVelocity.x = deltaY * 0.005;
+            rotationVelocity.y = deltaX * 0.005;
+            cube.rotation.x += rotationVelocity.x;
+            cube.rotation.y += rotationVelocity.y;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+            lastInteractionTime = Date.now();
+        }
+
+        function onPointerUp() { isDragging = false; lastInteractionTime = Date.now(); }
+
+        function isMobileDevice() { return window.innerWidth <= 768; }
+
+        var touchRaycaster = new THREE.Raycaster();
+        var touchMouse = new THREE.Vector2();
+        var isTouchingCube = false;
+
+        function checkTouchHitsCube(clientX, clientY) {
+            var rect = renderer.domElement.getBoundingClientRect();
+            touchMouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            touchMouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            touchRaycaster.setFromCamera(touchMouse, camera);
+            var intersects = touchRaycaster.intersectObject(cube);
+            return intersects.length > 0;
+        }
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                var touchX = event.touches[0].clientX;
+                var touchY = event.touches[0].clientY;
+                previousMousePosition = { x: touchX, y: touchY };
+                isTouchingCube = checkTouchHitsCube(touchX, touchY);
+                if (isTouchingCube) {
+                    event.preventDefault();
+                    isDragging = true;
+                    autoRotate = false;
+                    isAnimatingToFace = false;
+                }
+            }
+        }
+
+        function onTouchMove(event) {
+            if (event.touches.length !== 1) return;
+            if (!isTouchingCube || !isDragging) return;
+            event.preventDefault();
+            isAnimatingToFace = false;
+            var deltaX = event.touches[0].clientX - previousMousePosition.x;
+            var deltaY = event.touches[0].clientY - previousMousePosition.y;
+            rotationVelocity.x = deltaY * 0.005;
+            rotationVelocity.y = deltaX * 0.005;
+            cube.rotation.x += rotationVelocity.x;
+            cube.rotation.y += rotationVelocity.y;
+            previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+            lastInteractionTime = Date.now();
+        }
+
+        function onTouchEnd() {
+            isDragging = false;
+            isTouchingCube = false;
+            lastInteractionTime = Date.now();
+        }
+
+        renderer.domElement.addEventListener('mousedown', onPointerDown);
+        renderer.domElement.addEventListener('mousemove', onPointerMove);
+        renderer.domElement.addEventListener('mouseup', onPointerUp);
+        renderer.domElement.addEventListener('mouseleave', onPointerUp);
+        renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+        renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+        renderer.domElement.addEventListener('touchend', onTouchEnd);
+
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2();
+        var clickStartPosition = { x: 0, y: 0 };
+        var clickStartTime = 0;
+
+        renderer.domElement.addEventListener('mousedown', function(event) {
+            clickStartPosition = { x: event.clientX, y: event.clientY };
+            clickStartTime = Date.now();
+        });
+
+        renderer.domElement.addEventListener('mouseup', function(event) {
+            var dx = event.clientX - clickStartPosition.x;
+            var dy = event.clientY - clickStartPosition.y;
+            if (Math.sqrt(dx * dx + dy * dy) < 10 && Date.now() - clickStartTime < 300) {
+                handleClick(event.clientX, event.clientY);
+            }
+        });
+
+        renderer.domElement.addEventListener('touchstart', function(event) {
+            if (event.touches.length === 1) {
+                clickStartPosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+                clickStartTime = Date.now();
+            }
+        });
+
+        renderer.domElement.addEventListener('touchend', function(event) {
+            if (event.changedTouches.length === 1) {
+                var touch = event.changedTouches[0];
+                var dx = touch.clientX - clickStartPosition.x;
+                var dy = touch.clientY - clickStartPosition.y;
+                if (Math.sqrt(dx * dx + dy * dy) < 20 && Date.now() - clickStartTime < 300) {
+                    handleClick(touch.clientX, touch.clientY);
+                }
+            }
+        });
+
+        function handleClick(clientX, clientY) {
+            var rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObject(cube);
+            if (intersects.length > 0) {
+                var faceIndex = Math.floor(intersects[0].faceIndex / trianglesPerFace);
+                rotateFaceToCamera(faceIndex);
+                showTooltip(faceIndex, clientX, clientY);
+            } else {
+                hideTooltip();
+            }
+        }
+
+        var tooltip = document.getElementById('w4u-cube-tooltip');
+        var tooltipNumber = document.getElementById('w4u-cube-tooltip-number');
+        var tooltipTitle = document.getElementById('w4u-cube-tooltip-title');
+        var tooltipDescription = document.getElementById('w4u-cube-tooltip-description');
+        var tooltipQrImg = document.getElementById('w4u-cube-tooltip-qr-img');
+        var backdrop = document.getElementById('w4u-cube-backdrop');
+
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 100, g: 100, b: 100 };
+        }
+
+        function createDynamicGradient(hexColor) {
+            var rgb = hexToRgb(hexColor);
+            var light1 = 'rgba(' + Math.min(255, rgb.r + 140) + ',' + Math.min(255, rgb.g + 140) + ',' + Math.min(255, rgb.b + 140) + ', 0.95)';
+            var light2 = 'rgba(' + Math.min(255, rgb.r + 100) + ',' + Math.min(255, rgb.g + 100) + ',' + Math.min(255, rgb.b + 100) + ', 0.9)';
+            var light3 = 'rgba(' + Math.min(255, rgb.r + 60) + ',' + Math.min(255, rgb.g + 60) + ',' + Math.min(255, rgb.b + 60) + ', 0.85)';
+            return 'linear-gradient(145deg, ' + light1 + ' 0%, ' + light2 + ' 50%, ' + light3 + ' 100%)';
+        }
+
+        function showTooltip(faceIndex, x, y) {
+            var theme = themes[faceIndex];
+            tooltipNumber.textContent = faceIndex + 1;
+            tooltipTitle.textContent = theme.name;
+            tooltipDescription.textContent = theme.description;
+            tooltipQrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(theme.url);
+            tooltip.style.background = createDynamicGradient(theme.color);
+
+            var isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                tooltip.style.left = '';
+                tooltip.style.right = '';
+                tooltip.style.top = '';
+                tooltip.style.bottom = '';
+            } else {
+                var tooltipWidth = 240, tooltipHeight = 320, padding = 40;
+                var sectionRect = section.getBoundingClientRect();
+                var sectionCenterX = sectionRect.left + sectionRect.width / 2;
+                var posY = (sectionRect.height - tooltipHeight) / 2;
+                var posX = x >= sectionCenterX
+                    ? sectionRect.width / 2 + 200
+                    : sectionRect.width / 2 - 200 - tooltipWidth;
+                if (posX + tooltipWidth > sectionRect.width - padding) posX = sectionRect.width - tooltipWidth - padding;
+                if (posX < padding) posX = padding;
+                tooltip.style.left = posX + 'px';
+                tooltip.style.top = posY + 'px';
+            }
+            tooltip.classList.add('visible');
+            if (isMobileDevice()) {
+                if (backdrop) backdrop.classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+            if (backdrop) backdrop.classList.remove('visible');
+            if (isMobileDevice()) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        var closeBtn = document.getElementById('w4u-cube-tooltip-close');
+        closeBtn.addEventListener('click', function(e) { e.stopPropagation(); hideTooltip(); });
+        closeBtn.addEventListener('touchend', function(e) { e.preventDefault(); e.stopPropagation(); hideTooltip(); });
+
+        if (backdrop) {
+            backdrop.addEventListener('click', hideTooltip);
+            backdrop.addEventListener('touchend', function(e) { e.preventDefault(); hideTooltip(); });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!renderer.domElement.contains(event.target) && !tooltip.contains(event.target)) hideTooltip();
+        });
+
+        function onResize() {
+            containerWidth = container.offsetWidth;
+            containerHeight = container.offsetHeight;
+            camera.aspect = containerWidth / containerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(containerWidth, containerHeight);
+            updateCameraPosition();
+        }
+
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', function() { setTimeout(onResize, 100); });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isAnimatingToFace) {
+                cube.quaternion.slerp(targetQuaternion, animationSpeed);
+                if (cube.quaternion.angleTo(targetQuaternion) < 0.01) {
+                    cube.quaternion.copy(targetQuaternion);
+                    isAnimatingToFace = false;
+                    lastInteractionTime = Date.now();
+                }
+            } else if (!isDragging && Date.now() - lastInteractionTime > autoRotateDelay) {
+                autoRotate = true;
+            }
+
+            if (autoRotate && !isAnimatingToFace) {
+                cube.rotation.y += 0.001;
+                cube.rotation.x += 0.0003;
+            } else if (!isDragging && !isAnimatingToFace) {
+                rotationVelocity.x *= 0.95;
+                rotationVelocity.y *= 0.95;
+                cube.rotation.x += rotationVelocity.x;
+                cube.rotation.y += rotationVelocity.y;
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            waitForFont('Manrope', function() {
+                loadThreeJS(initCube);
+            });
+        });
+    } else {
+        waitForFont('Manrope', function() {
+            loadThreeJS(initCube);
+        });
+    }
+})();
+</script>

@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Workshop: Sistema ACLAS — Attrai Clienti con l'AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-1:#f0e6fa;--bg-2:#e8dff5;--bg-3:#ddd6f3;--card-bg:rgba(255,255,255,0.82);--card-bg-solid:#fff;--card-border:rgba(255,255,255,0.6);--card-hover:rgba(255,255,255,0.95);--text-dark:#1a1a2e;--text-medium:#4a4a5a;--text-light:#7a7a8a;--text-faint:#a0a0b0;--purple:#8b5cf6;--purple-light:#a78bfa;--purple-dim:rgba(139,92,246,0.12);--purple-faint:rgba(139,92,246,0.06);--ai-tag:#7c3aed;--bruce-green:#10b981;--border-light:rgba(139,92,246,0.12);--border-med:rgba(139,92,246,0.2);--shadow-sm:0 2px 12px rgba(139,92,246,0.06);--shadow-md:0 4px 24px rgba(139,92,246,0.08);--shadow-lg:0 8px 40px rgba(139,92,246,0.12);--radius:16px;--radius-sm:10px;--radius-xs:8px;--phase1:#8b5cf6;--phase2:#3b82f6;--phase3:#10b981;--phase4:#f97316;--phase5:#ec4899}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 40%,var(--bg-3) 100%);background-attachment:fixed;min-height:100vh;color:var(--text-dark);line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(139,92,246,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+section{padding:80px 0}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif}
+.hero{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:100px 0 60px}
+.hero-inner{max-width:720px}
+.hero-icon{font-size:28px;color:var(--purple);margin-bottom:28px}
+.hero-workshop-label{font-size:.85rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text-light);margin-bottom:12px}
+h1{font-size:clamp(2.4rem,7vw,4.2rem);font-weight:500;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+h1 .purple{color:var(--purple)}
+.hero-tagline{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.7rem);font-style:italic;color:var(--purple);margin-bottom:28px}
+.hero-sub{font-size:1.05rem;color:var(--text-medium);max-width:580px;margin:0 auto 40px;line-height:1.75}
+.hero-sub strong{color:var(--text-dark);font-weight:600}
+.hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--purple);display:block;line-height:1.2}
+.hero-stat .label{font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+.section-icon{text-align:center;font-size:20px;color:var(--purple);margin-bottom:20px}
+.section-label{display:block;text-align:center;font-size:.72rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--text-light);margin-bottom:10px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:500;text-align:center;letter-spacing:-.5px;margin-bottom:8px;line-height:1.2}
+.section-subtitle{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-style:italic;color:var(--purple);text-align:center;margin-bottom:12px}
+.section-desc{text-align:center;color:var(--text-medium);max-width:560px;margin:0 auto 48px;font-size:.95rem}
+.calendar-section{padding:60px 0 80px}
+.timeline-phases{display:flex;gap:6px;margin-bottom:6px}
+.timeline-phase-label{flex:1;text-align:center;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;font-weight:600;padding:10px 4px;border-radius:var(--radius-sm) var(--radius-sm) 0 0}
+.timeline-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}
+.week-cell{position:relative;padding:22px 10px 18px;border-radius:0 0 var(--radius-sm) var(--radius-sm);background:var(--card-bg);border:1px solid var(--card-border);cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);text-align:center;box-shadow:var(--shadow-sm);overflow:hidden}
+.week-cell::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:.4;transition:opacity .3s}
+.week-cell:hover{background:var(--card-hover);transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.week-cell:hover::before,.week-cell.active::before{opacity:1}
+.week-cell.active{background:var(--card-bg-solid);box-shadow:var(--shadow-lg);transform:translateY(-3px)}
+.week-num{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:600;color:var(--text-dark);line-height:1.2;margin-bottom:2px;transition:color .3s}
+.week-label{font-size:.65rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.08em;font-weight:500}
+.week-title{font-size:.7rem;color:var(--text-light);margin-top:8px;line-height:1.3;font-weight:500}
+.week-cell[data-phase="1"]::before{background:var(--phase1)}.week-cell[data-phase="1"].active .week-num,.week-cell[data-phase="1"]:hover .week-num{color:var(--phase1)}.week-cell[data-phase="1"].active{border-color:rgba(139,92,246,.3)}
+.week-cell[data-phase="2"]::before{background:var(--phase2)}.week-cell[data-phase="2"].active .week-num,.week-cell[data-phase="2"]:hover .week-num{color:var(--phase2)}.week-cell[data-phase="2"].active{border-color:rgba(59,130,246,.3)}
+.week-cell[data-phase="3"]::before{background:var(--phase3)}.week-cell[data-phase="3"].active .week-num,.week-cell[data-phase="3"]:hover .week-num{color:var(--phase3)}.week-cell[data-phase="3"].active{border-color:rgba(16,185,129,.3)}
+.week-cell[data-phase="4"]::before{background:var(--phase4)}.week-cell[data-phase="4"].active .week-num,.week-cell[data-phase="4"]:hover .week-num{color:var(--phase4)}.week-cell[data-phase="4"].active{border-color:rgba(249,115,22,.3)}
+.week-cell[data-phase="5"]::before{background:var(--phase5)}.week-cell[data-phase="5"].active .week-num,.week-cell[data-phase="5"]:hover .week-num{color:var(--phase5)}.week-cell[data-phase="5"].active{border-color:rgba(236,72,153,.3)}
+.week-detail{margin-top:12px;overflow:hidden;max-height:0;opacity:0;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .4s,margin .4s}
+.week-detail.open{max-height:800px;opacity:1;margin-top:16px}
+.week-detail-inner{padding:32px;background:var(--card-bg-solid);border-radius:var(--radius);border:1px solid var(--card-border);box-shadow:var(--shadow-md);display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.detail-left h3{font-size:1.4rem;font-weight:500;color:var(--text-dark);margin-bottom:6px}
+.detail-phase-tag{display:inline-block;padding:4px 14px;border-radius:100px;font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+.detail-teacher{font-size:.85rem;color:var(--text-light);margin-bottom:16px}
+.detail-teacher strong{color:var(--text-dark);font-weight:600}
+.detail-topics{list-style:none;display:flex;flex-direction:column;gap:8px}
+.detail-topics li{font-size:.88rem;color:var(--text-medium);padding-left:18px;position:relative;line-height:1.5}
+.detail-topics li::before{content:'→';position:absolute;left:0;color:var(--purple)}
+.detail-format{margin-top:14px;display:flex;gap:10px}
+.format-tag{padding:5px 14px;border-radius:8px;background:var(--purple-faint);font-size:.75rem;color:var(--text-light);border:1px solid var(--border-light)}
+.detail-right{display:flex;flex-direction:column;justify-content:center}
+.ai-skill-box{padding:24px;border-radius:var(--radius-sm);background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(124,58,237,.02));border:1px solid rgba(124,58,237,.15)}
+.ai-skill-label{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ai-tag);margin-bottom:10px;font-weight:600}
+.ai-skill-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--purple);margin-bottom:8px}
+.ai-skill-desc{font-size:.85rem;color:var(--text-medium);line-height:1.6}
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:48px 0 0}
+.problem-card{padding:32px;border-radius:var(--radius);background:var(--card-bg);border:1px solid var(--card-border);box-shadow:var(--shadow-sm);transition:all .3s;position:relative;overflow:hidden}
+.problem-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.problem-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.problem-card.purple-card::before{background:linear-gradient(to right,var(--purple),transparent)}
+.problem-card.ai-card::before{background:linear-gradient(to right,var(--ai-tag),transparent)}
+.problem-num{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:600;line-height:1;margin-bottom:10px}
+.purple-card .problem-num{color:rgba(139,92,246,.2)}.ai-card .problem-num{color:rgba(124,58,237,.2)}
+.problem-title{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;margin-bottom:10px}
+.purple-card .problem-title{color:var(--purple)}.ai-card .problem-title{color:var(--ai-tag)}
+.problem-text{font-size:.92rem;color:var(--text-medium);line-height:1.7}
+.solution-block{margin-top:24px;padding:36px;border-radius:var(--radius);background:var(--card-bg-solid);border:1px solid var(--border-med);box-shadow:var(--shadow-md);text-align:center;position:relative}
+.solution-block::before{content:'';position:absolute;top:0;left:15%;right:15%;height:3px;background:linear-gradient(to right,var(--purple),var(--ai-tag),var(--purple));border-radius:2px}
+.solution-equation{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2.5vw,1.7rem);font-weight:500;margin-bottom:14px;line-height:1.5;color:var(--text-dark)}
+.solution-equation .purple{color:var(--purple);font-weight:600}.solution-equation .ai{color:var(--ai-tag);font-weight:600}.solution-equation .plus{display:inline-block;margin:0 10px;color:var(--text-faint)}
+.solution-desc{color:var(--text-medium);max-width:560px;margin:0 auto;font-size:.95rem}
+.divider{height:1px;background:linear-gradient(to right,transparent,var(--border-light),transparent);margin:0 auto;max-width:600px}
+.phase-card{margin-bottom:10px;border-radius:var(--radius);border:1px solid var(--card-border);background:var(--card-bg);overflow:hidden;box-shadow:var(--shadow-sm);transition:all .3s}
+.phase-card:hover{box-shadow:var(--shadow-md)}
+.phase-card.open{background:var(--card-bg-solid);box-shadow:var(--shadow-lg)}
+.phase-header{padding:24px 28px;cursor:pointer;display:flex;align-items:center;gap:18px;user-select:none;transition:background .2s}
+.phase-header:hover{background:rgba(255,255,255,.4)}
+.phase-number{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;line-height:1;min-width:46px;opacity:.25;transition:opacity .3s}
+.phase-card.open .phase-number{opacity:.6}
+.phase-header-text{flex:1}
+.phase-tag{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:3px}
+.phase-header-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:500;color:var(--text-dark)}
+.phase-weeks-tag{font-size:.72rem;color:var(--text-light);padding:4px 14px;border-radius:100px;border:1px solid var(--border-light);white-space:nowrap;font-weight:500}
+.phase-toggle{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--purple-faint);color:var(--purple);transition:transform .4s cubic-bezier(.4,0,.2,1),background .3s;flex-shrink:0}
+.phase-card.open .phase-toggle{transform:rotate(180deg);background:var(--purple-dim)}
+.phase-body{max-height:0;overflow:hidden;transition:max-height .6s cubic-bezier(.4,0,.2,1)}
+.phase-body-inner{padding:0 28px 32px 92px}
+.phase-sales-angle{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--text-medium);margin-bottom:24px;line-height:1.7;border-left:2px solid;padding-left:18px}
+.week-block{margin-bottom:22px}
+.week-block-title{font-family:'Cormorant Garamond',serif;font-size:1.12rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:10px;color:var(--text-dark)}
+.week-block-title .wnum{font-family:'Inter',sans-serif;font-size:.65rem;padding:3px 10px;border-radius:100px;font-weight:600;letter-spacing:.05em}
+.week-points{list-style:none;display:flex;flex-direction:column;gap:6px}
+.week-points li{font-size:.88rem;color:var(--text-medium);padding-left:18px;position:relative;line-height:1.6}
+.week-points li::before{content:'→';position:absolute;left:0;color:var(--purple-light)}
+.week-points li strong{color:var(--text-dark);font-weight:600}
+.ai-skill-inline{margin-top:10px;padding:12px 16px;border-radius:var(--radius-xs);background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(124,58,237,.02));border:1px solid rgba(124,58,237,.12);font-size:.82rem;color:var(--ai-tag);display:flex;align-items:center;gap:8px;line-height:1.5}
+.ai-skill-inline .ai-icon{font-size:.65rem;padding:2px 8px;background:rgba(124,58,237,.1);border-radius:4px;font-weight:700;letter-spacing:.05em;color:var(--ai-tag);flex-shrink:0}
+.phase-outcome{margin-top:22px;padding:22px;border-radius:var(--radius-sm);background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(16,185,129,.01));border:1px solid rgba(16,185,129,.15)}
+.phase-outcome-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;font-weight:600;margin-bottom:6px;color:var(--bruce-green)}
+.phase-outcome-text{font-size:.92rem;color:var(--text-medium);line-height:1.7}
+.phase-card[data-phase="1"] .phase-number,.phase-card[data-phase="1"] .phase-tag{color:var(--phase1)}.phase-card[data-phase="1"] .phase-sales-angle{border-color:rgba(139,92,246,.3)}.phase-card[data-phase="1"] .wnum{background:rgba(139,92,246,.1);color:var(--phase1)}
+.phase-card[data-phase="2"] .phase-number,.phase-card[data-phase="2"] .phase-tag{color:var(--phase2)}.phase-card[data-phase="2"] .phase-sales-angle{border-color:rgba(59,130,246,.3)}.phase-card[data-phase="2"] .wnum{background:rgba(59,130,246,.1);color:var(--phase2)}
+.phase-card[data-phase="3"] .phase-number,.phase-card[data-phase="3"] .phase-tag{color:var(--phase3)}.phase-card[data-phase="3"] .phase-sales-angle{border-color:rgba(16,185,129,.3)}.phase-card[data-phase="3"] .wnum{background:rgba(16,185,129,.1);color:var(--phase3)}
+.phase-card[data-phase="4"] .phase-number,.phase-card[data-phase="4"] .phase-tag{color:var(--phase4)}.phase-card[data-phase="4"] .phase-sales-angle{border-color:rgba(249,115,22,.3)}.phase-card[data-phase="4"] .wnum{background:rgba(249,115,22,.1);color:var(--phase4)}
+.phase-card[data-phase="5"] .phase-number,.phase-card[data-phase="5"] .phase-tag{color:var(--phase5)}.phase-card[data-phase="5"] .phase-sales-angle{border-color:rgba(236,72,153,.3)}.phase-card[data-phase="5"] .wnum{background:rgba(236,72,153,.1);color:var(--phase5)}
+.journey-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:48px}
+.journey-card{padding:22px;border-radius:var(--radius-sm);background:var(--card-bg);border:1px solid var(--card-border);box-shadow:var(--shadow-sm);transition:all .3s}
+.journey-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);background:var(--card-hover)}
+.journey-week{font-size:.68rem;color:var(--text-faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;font-weight:600}
+.journey-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--purple);margin-bottom:6px;line-height:1.3}
+.journey-desc{font-size:.8rem;color:var(--text-medium);line-height:1.5}
+.journey-card.highlight{background:linear-gradient(135deg,rgba(139,92,246,.08),var(--card-bg));border-color:var(--border-med)}
+.journey-card.highlight .journey-week{color:var(--purple)}
+.journey-card.green-hl{background:linear-gradient(135deg,rgba(16,185,129,.06),var(--card-bg));border-color:rgba(16,185,129,.2)}
+.journey-card.green-hl .journey-week{color:var(--bruce-green)}.journey-card.green-hl .journey-title{color:var(--bruce-green)}
+.transform-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:stretch;margin-top:48px}
+.transform-card{padding:32px;border-radius:var(--radius);box-shadow:var(--shadow-sm)}
+.transform-card.before{background:var(--card-bg);border:1px solid rgba(220,80,80,.15)}
+.transform-card.after{background:var(--card-bg);border:1px solid rgba(16,185,129,.2)}
+.transform-label{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px}
+.before .transform-label{color:#dc5050}.after .transform-label{color:#10b981}
+.transform-items{list-style:none;display:flex;flex-direction:column;gap:10px}
+.transform-items li{font-size:.88rem;color:var(--text-medium);padding-left:22px;position:relative;line-height:1.6}
+.before .transform-items li::before{content:'✕';position:absolute;left:0;color:#dc5050;font-size:.7rem;top:4px}
+.after .transform-items li::before{content:'✓';position:absolute;left:0;color:#10b981;font-weight:700;top:1px}
+.transform-arrow{display:flex;align-items:center;font-size:1.6rem;color:var(--text-faint)}
+.cta-section{padding:80px 0 40px;text-align:center}
+.cta-title{font-size:clamp(1.8rem,3.5vw,2.6rem);font-weight:500;margin-bottom:14px;line-height:1.25;letter-spacing:-.5px}
+.cta-sub{color:var(--text-medium);font-size:1.05rem;max-width:520px;margin:0 auto 40px;line-height:1.7}
+.cta-stats{display:flex;justify-content:center;gap:36px;flex-wrap:wrap}
+.cta-stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;display:block}
+.cta-stat-label{font-size:.72rem;color:var(--text-light);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.cta-final{padding:60px 0 40px;text-align:center}
+.cta-final-inner{max-width:640px;margin:0 auto}
+.cta-final-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,3vw,2rem);font-weight:500;color:var(--text-dark);margin-bottom:12px;line-height:1.3}
+.cta-final-sub{font-size:.95rem;color:var(--text-medium);margin-bottom:36px;line-height:1.6}
+.cta-big-btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:22px 56px;background:linear-gradient(135deg,var(--purple) 0%,#7c3aed 100%);color:#fff;font-family:'Inter',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:.02em;border:none;border-radius:100px;cursor:pointer;text-decoration:none;box-shadow:0 8px 32px rgba(139,92,246,.35),0 2px 8px rgba(139,92,246,.2);transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+.cta-big-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 50%);border-radius:100px}
+.cta-big-btn:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 44px rgba(139,92,246,.45),0 4px 12px rgba(139,92,246,.25)}
+.cta-big-btn:active{transform:translateY(-1px) scale(.99)}
+.cta-big-btn .btn-arrow{font-size:1.3rem;transition:transform .3s}
+.cta-big-btn:hover .btn-arrow{transform:translateX(4px)}
+.cta-guarantee{margin-top:20px;font-size:.78rem;color:var(--text-faint);display:flex;align-items:center;justify-content:center;gap:6px}
+.group-section{padding:80px 0}
+.group-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:48px}
+.group-img{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-lg)}
+.group-img img{width:100%;display:block;border-radius:var(--radius)}
+.group-text h3{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:500;color:var(--text-dark);margin-bottom:4px;line-height:1.2}
+.group-text .subtitle{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--text-light);font-style:italic;margin-bottom:20px}
+.group-text p{font-size:.95rem;color:var(--text-medium);line-height:1.7;margin-bottom:18px}
+.group-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.group-list li{font-size:.92rem;color:var(--text-medium);padding-left:20px;position:relative;line-height:1.6;font-weight:500}
+.group-list li::before{content:'→';position:absolute;left:0;color:var(--purple)}
+.mentoring-section{padding:80px 0;text-align:center}
+.mentoring-inner{max-width:720px;margin:0 auto}
+.mentoring-eyebrow{font-size:.72rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--purple);margin-bottom:20px}
+.mentoring-quote{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,4vw,2.6rem);font-style:italic;color:var(--text-dark);margin-bottom:28px;line-height:1.3}
+.mentoring-desc{font-size:1rem;color:var(--text-medium);line-height:1.8;margin-bottom:20px}
+.mentoring-desc strong{color:var(--text-dark);font-weight:600}
+.mentoring-highlight{display:inline-block;padding:16px 32px;border-radius:var(--radius-sm);background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(139,92,246,.03));border:1px solid var(--border-med);font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;color:var(--purple);margin-top:12px}
+.why20-section{padding:60px 0}
+.why20-grid{display:grid;grid-template-columns:200px 1fr;gap:40px;align-items:start;margin-top:36px}
+.why20-icon img{width:100%;max-width:180px}
+.why20-content h3{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:500;color:var(--text-dark);margin-bottom:12px}
+.why20-content h4{font-size:1rem;font-weight:600;color:var(--text-dark);margin-bottom:12px}
+.why20-list{list-style:none;padding:20px 24px;border-radius:var(--radius-sm);background:var(--card-bg);border:1px solid var(--card-border);margin-bottom:18px;display:flex;flex-direction:column;gap:6px}
+.why20-list li{font-size:.9rem;color:var(--text-medium);padding-left:16px;position:relative;line-height:1.6}
+.why20-list li::before{content:'→';position:absolute;left:0;color:var(--purple)}
+.why20-content p{font-size:.92rem;color:var(--text-medium);line-height:1.7;margin-bottom:8px}
+.why20-closer{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-style:italic;color:var(--purple);margin-top:20px}
+.bonus-section{padding:80px 0}
+.bonus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;align-items:start}
+.bonus-card{border-radius:var(--radius);background:#1a1a2e;border:1px solid rgba(139,92,246,.25);overflow:hidden;transition:all .4s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 24px rgba(0,0,0,.15)}
+.bonus-card:hover{box-shadow:0 8px 40px rgba(0,0,0,.25);border-color:rgba(139,92,246,.4)}
+.bonus-card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:var(--radius) var(--radius) 0 0;transition:transform 1.2s ease-out}
+.bonus-card-img:hover{transform:scale(1.08)}
+.bonus-card-body{padding:24px 16px;text-align:center;cursor:pointer}
+.bonus-card-title{font-family:'Inter',sans-serif;font-size:.9rem;font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.bonus-card-desc{font-size:.85rem;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:16px}
+.bonus-toggle-btn{display:inline-flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);cursor:pointer;transition:transform .3s}
+.bonus-card.open .bonus-toggle-btn{transform:rotate(180deg)}
+.bonus-expand{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.bonus-card.open .bonus-expand{max-height:300px}
+.bonus-expand-inner{padding:0 16px 24px;text-align:center;border-top:1px solid rgba(255,255,255,.08)}
+.bonus-expand-title{font-weight:700;color:#fff;margin:16px 0 10px;font-size:.92rem}
+.bonus-expand-desc{font-size:.85rem;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:14px}
+.bonus-value{font-size:.88rem;color:rgba(255,255,255,.7)}
+.bonus-value strong{color:var(--purple-light);font-weight:700}
+.bonus-value .free{color:var(--bruce-green);font-weight:600}
+.faq-section{padding:80px 0}
+.faq-list{max-width:780px;margin:48px auto 0;display:flex;flex-direction:column;gap:10px}
+.faq-item{border-radius:var(--radius-sm);background:#1a1a2e;border:1px solid rgba(139,92,246,.15);overflow:hidden;transition:all .3s}
+.faq-item:hover{border-color:rgba(139,92,246,.3)}
+.faq-question{padding:20px 24px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;color:#fff;font-size:.95rem;font-weight:500;line-height:1.5;user-select:none}
+.faq-plus{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:1rem;color:rgba(255,255,255,.5);flex-shrink:0;transition:all .3s}
+.faq-item.open .faq-plus{background:var(--purple);color:#fff;transform:rotate(45deg)}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.faq-item.open .faq-answer{max-height:500px}
+.faq-answer-inner{padding:0 24px 24px;color:rgba(255,255,255,.7);font-size:.9rem;line-height:1.7}
+.faq-answer-inner strong{color:#fff;font-weight:600}
+.faq-answer-inner em{color:var(--purple-light);font-style:italic}
+.site-footer{padding:32px 0;border-top:1px solid var(--border-light);text-align:center}
+.footer-links{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-bottom:10px}
+.footer-links a{font-size:.8rem;color:var(--text-light);text-decoration:none;transition:color .3s}
+.footer-links a:hover{color:var(--purple)}
+.footer-copy{font-size:.72rem;color:var(--text-faint)}
+@media(max-width:900px){.timeline-grid{grid-template-columns:repeat(4,1fr)}.week-detail-inner{grid-template-columns:1fr;gap:20px}.intro-grid{grid-template-columns:1fr}.journey-grid{grid-template-columns:repeat(2,1fr)}.transform-grid{grid-template-columns:1fr}.transform-arrow{transform:rotate(90deg);padding:10px 0;justify-content:center}.phase-body-inner{padding-left:28px}.phase-header{gap:12px;padding:20px}.phase-number{font-size:1.8rem;min-width:36px}.group-grid{grid-template-columns:1fr;gap:28px}.why20-grid{grid-template-columns:1fr}.why20-icon{text-align:center}.why20-icon img{max-width:140px}.bonus-grid{grid-template-columns:1fr;max-width:420px;margin-left:auto;margin-right:auto}}
+@media(max-width:600px){.container{padding:0 16px}section{padding:50px 0}.hero{min-height:70vh;padding:80px 0 50px}.hero-sub{font-size:.95rem;margin-bottom:28px}.hero-stats{gap:16px}.hero-stat .num{font-size:1.8rem}.hero-stat .label{font-size:.65rem}.calendar-section{padding:40px 0 60px}.timeline-phases{display:none}.timeline-grid{grid-template-columns:repeat(4,1fr);gap:5px}.week-cell{padding:14px 6px 12px;border-radius:0 0 8px 8px}.week-num{font-size:1.4rem}.week-label{font-size:.58rem}.week-title{font-size:.6rem;margin-top:4px;line-height:1.2}.week-detail-inner{padding:20px;grid-template-columns:1fr;gap:16px}.detail-left h3{font-size:1.15rem}.detail-topics li{font-size:.82rem}.ai-skill-box{padding:16px}.ai-skill-title{font-size:1.05rem}.ai-skill-desc{font-size:.8rem}.intro-grid{gap:12px;margin-top:32px}.problem-card{padding:24px}.problem-num{font-size:2.4rem}.problem-title{font-size:1.1rem}.problem-text{font-size:.85rem}.solution-block{padding:24px 20px}.phase-header{padding:16px;gap:10px}.phase-number{font-size:1.6rem;min-width:30px}.phase-header-title{font-size:1.1rem}.phase-weeks-tag{font-size:.65rem;padding:3px 10px}.phase-toggle{width:26px;height:26px}.phase-body-inner{padding:0 16px 24px 16px}.phase-sales-angle{font-size:.95rem;padding-left:14px}.week-block-title{font-size:1rem;flex-wrap:wrap}.week-points li{font-size:.82rem;padding-left:16px}.ai-skill-inline{font-size:.78rem;padding:10px 12px}.phase-outcome{padding:16px}.phase-outcome-text{font-size:.85rem}.journey-grid{grid-template-columns:1fr;gap:10px}.journey-card{padding:18px}.transform-card{padding:24px}.transform-items li{font-size:.82rem}.cta-section{padding:50px 0 30px}.cta-stats{gap:16px}.cta-stat-num{font-size:1.6rem}.cta-final{padding:40px 0 30px}.cta-big-btn{padding:18px 40px;font-size:1.05rem;width:100%;max-width:380px}.group-grid{gap:20px}.group-text h3{font-size:1.5rem}.group-text .subtitle{font-size:1.1rem}.mentoring-section{padding:50px 0}.mentoring-quote{font-size:1.4rem}.why20-grid{gap:20px}.why20-content h3{font-size:1.3rem}.bonus-grid{gap:14px;margin-top:32px}.bonus-card-body{padding:18px}.bonus-card-title{font-size:.82rem}.faq-question{padding:16px 18px;font-size:.88rem}.faq-answer-inner{padding:0 18px 18px;font-size:.85rem}.footer-links{gap:16px}}
+@media(max-width:380px){h1{font-size:2.2rem}.hero-tagline{font-size:1.1rem}.hero-stats{gap:12px}.hero-stat .num{font-size:1.5rem}.timeline-grid{grid-template-columns:repeat(4,1fr);gap:3px}.week-cell{padding:10px 4px}.week-num{font-size:1.2rem}.week-title{display:none}.cta-big-btn{padding:16px 28px;font-size:.95rem}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero"><div class="container"><div class="hero-inner">
+<div class="hero-icon">&#10022;</div>
+<div class="hero-workshop-label">Workshop:</div>
+<h1>SISTEMA <span class="purple">ACLAS</span></h1>
+<div class="hero-tagline">Attrai clienti con l'AI</div>
+<p class="hero-sub"><strong>8 settimane</strong> per unire la tua competenza all'intelligenza artificiale e costruire un sistema che attrae clienti, comunica il tuo valore e lavora anche quando tu non ci sei.</p>
+<div class="hero-stats">
+<div class="hero-stat"><span class="num">8</span><span class="label">Settimane</span></div>
+<div class="hero-stat"><span class="num">20+</span><span class="label">Ore live</span></div>
+<div class="hero-stat"><span class="num">5</span><span class="label">Fasi</span></div>
+<div class="hero-stat"><span class="num">&infin;</span><span class="label">Skill AI</span></div>
+</div>
+</div></div></section>
+
+<!-- CALENDAR -->
+<section class="calendar-section"><div class="container">
+<div class="section-icon">&#10022;</div>
+<div class="section-label">Il percorso</div>
+<div class="section-title">8 settimane. Ogni settimana un pezzo.</div>
+<div class="section-subtitle">Alla fine hai tutto.</div>
+<p class="section-desc">Clicca su ogni settimana per vedere cosa succede, chi insegna, e quale skill AI impari.</p>
+<div class="timeline-phases">
+<div class="timeline-phase-label" style="flex:2;background:rgba(139,92,246,.08);color:var(--phase1)">Fase 1</div>
+<div class="timeline-phase-label" style="flex:2;background:rgba(59,130,246,.08);color:var(--phase2)">Fase 2</div>
+<div class="timeline-phase-label" style="flex:1;background:rgba(16,185,129,.08);color:var(--phase3)">Fase 3</div>
+<div class="timeline-phase-label" style="flex:2;background:rgba(249,115,22,.08);color:var(--phase4)">Fase 4</div>
+<div class="timeline-phase-label" style="flex:1;background:rgba(236,72,153,.08);color:var(--phase5)">Bonus</div>
+</div>
+<div class="timeline-grid" id="weekGrid">
+<div class="week-cell" data-week="1" data-phase="1"><div class="week-num">1</div><div class="week-label">Sett.</div><div class="week-title">Cosa dici</div></div>
+<div class="week-cell" data-week="2" data-phase="1"><div class="week-num">2</div><div class="week-label">Sett.</div><div class="week-title">Come lo dici</div></div>
+<div class="week-cell" data-week="3" data-phase="2"><div class="week-num">3</div><div class="week-label">Sett.</div><div class="week-title">Il messaggio</div></div>
+<div class="week-cell" data-week="4" data-phase="2"><div class="week-num">4</div><div class="week-label">Sett.</div><div class="week-title">L'offerta</div></div>
+<div class="week-cell" data-week="5" data-phase="3"><div class="week-num">5</div><div class="week-label">Sett.</div><div class="week-title">Il sistema</div></div>
+<div class="week-cell" data-week="6" data-phase="4"><div class="week-num">6</div><div class="week-label">Sett.</div><div class="week-title">Essere interessanti</div></div>
+<div class="week-cell" data-week="7" data-phase="4"><div class="week-num">7</div><div class="week-label">Sett.</div><div class="week-title">Contenuti + AI</div></div>
+<div class="week-cell" data-week="8" data-phase="5"><div class="week-num">8</div><div class="week-label">Sett.</div><div class="week-title">LinkedIn</div></div>
+</div>
+<div class="week-detail" id="weekDetail"><div class="week-detail-inner" id="weekDetailInner"></div></div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- PROBLEMS -->
+<section><div class="container">
+<div class="section-icon">&#10022;</div>
+<div class="section-label">Perch&eacute; questo workshop</div>
+<div class="section-title">Hai due problemi.</div>
+<div class="section-subtitle">Si risolvono insieme.</div>
+<div class="intro-grid">
+<div class="problem-card purple-card">
+<div class="problem-num">01</div>
+<div class="problem-title">Sei bravo ma invisibile</div>
+<p class="problem-text">Hai 20 anni di esperienza. I tuoi clienti ti adorano. Ma il prossimo cliente non sa che esisti. Hai provato i social, hai scritto post che sembravano scritti da un altro, hai guardato creator ventenni e hai pensato &ldquo;non fa per me&rdquo;.</p>
+</div>
+<div class="problem-card ai-card">
+<div class="problem-num">02</div>
+<div class="problem-title">L'AI ti sembra un mistero</div>
+<p class="problem-text">Hai provato ChatGPT. Hai chiesto &ldquo;scrivimi un post&rdquo;. Hai ottenuto roba generica. Hai pensato &ldquo;non funziona per il mio lavoro&rdquo;. Oppure peggio: non l'hai ancora toccata e senti che stai restando indietro.</p>
+</div>
+</div>
+<div class="solution-block">
+<div class="solution-equation"><span class="purple">La tua esperienza</span> <span class="plus">+</span> <span class="ai">l'intelligenza artificiale</span> <span class="plus">=</span> qualcosa che nessuno pu&ograve; replicare</div>
+<p class="solution-desc">L'AI da sola produce spazzatura generica. La tua esperienza da sola resta chiusa nella tua testa. Insieme diventano un vantaggio competitivo che cresce ogni settimana.</p>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- PHASES -->
+<section><div class="container">
+<div class="section-icon">&#10022;</div>
+<div class="section-label">Fase per fase</div>
+<div class="section-title">Cosa costruisci in 8 settimane</div>
+<div class="section-subtitle">Ogni fase &egrave; un pezzo del puzzle — con l'AI integrata in ogni passo.</div>
+
+<!-- Phase 1 -->
+<div class="phase-card" data-phase="1"><div class="phase-header" onclick="togglePhase(this)"><div class="phase-number">01</div><div class="phase-header-text"><div class="phase-tag">Fase 1 — Tira fuori quello che sai</div><div class="phase-header-title">L'AI ti fa da specchio</div></div><div class="phase-weeks-tag">Sett. 1–2</div><div class="phase-toggle"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+<div class="phase-body"><div class="phase-body-inner">
+<p class="phase-sales-angle">Il tuo cervello ha 25 anni di esperienza compressa in modo caotico. L'AI ti fa da specchio: tira fuori tutto, te lo mette davanti, e tu vedi per la prima volta come ti percepisce il mercato.</p>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 1</span> Cosa dici — AI Mirroring</div>
+<ul class="week-points">
+<li>L'AI legge il tuo posizionamento <strong>come un cliente vero</strong></li>
+<li>Non sei tu che ti giudichi. &Egrave; l'AI che simula il mercato. <strong>Pi&ugrave; difficile da ignorare</strong></li>
+<li>Riscrivi il tuo messaggio fino a che un estraneo capisce cosa fai <strong>in 5 secondi</strong></li>
+<li>L'AI genera un <strong>Canvas visivo interattivo in HTML</strong></li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Dare contesto all'AI, usarla come simulatore di prospettiva, generare documenti visivi</div></div>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 2</span> Come lo dici — AI Voice Discovery</div>
+<ul class="week-points">
+<li>L'AI ti scrive lo stesso concetto in <strong>3 toni diversi</strong></li>
+<li><strong>Test Voce vs Maschera:</strong> dai all'AI un WhatsApp e il tuo LinkedIn</li>
+<li>L'AI ti crea la <strong>carta d'identit&agrave; del tuo tono di voce</strong> in 5 punti</li>
+<li><strong>3 versioni</strong> della tua risposta a &ldquo;Cosa fai?&rdquo;</li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Analisi comparativa, estrazione pattern, riscrittura con vincoli di tono</div></div>
+<div class="phase-outcome"><div class="phase-outcome-label">&#10003; Cosa hai alla fine della fase 1</div><p class="phase-outcome-text">Sai cosa dire, come dirlo, e suoni come te.</p></div>
+</div></div></div>
+
+<!-- Phase 2 -->
+<div class="phase-card" data-phase="2"><div class="phase-header" onclick="togglePhase(this)"><div class="phase-number">02</div><div class="phase-header-text"><div class="phase-tag">Fase 2 — Messaggio + Offerta</div><div class="phase-header-title">L'AI come focus group istantaneo</div></div><div class="phase-weeks-tag">Sett. 3–4</div><div class="phase-toggle"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+<div class="phase-body"><div class="phase-body-inner">
+<p class="phase-sales-angle">Con l'AI simuli il tuo cliente ideale e in 5 minuti sai dove il messaggio convince e dove lo perdi.</p>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 3</span> Il messaggio — AI Focus Group</div>
+<ul class="week-points">
+<li><strong>L'eroe &egrave; il tuo cliente.</strong> Tu sei la guida. StoryBrand a 7 pezzi.</li>
+<li>L'AI trova il <strong>problema INTERNO</strong> del cliente</li>
+<li>L'AI simula il tuo cliente ideale e testa il messaggio</li>
+<li>Focus group in 5 minuti. Ripetibile all'infinito.</li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Simulazione persona, testing iterativo</div></div>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 4</span> Offerta — AI Stress Test</div>
+<ul class="week-points">
+<li>Dal messaggio al <strong>posizionamento</strong></li>
+<li>Offerta con <strong>5 elementi chiari</strong></li>
+<li>L'AI fa lo <strong>stress test</strong>: obiezioni e confronto</li>
+<li><strong>Pagina offerta di 1 pagina</strong> testata con l'AI</li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Stress testing, simulazione obiezioni</div></div>
+<div class="phase-outcome"><div class="phase-outcome-label">&#10003; Cosa hai alla fine della fase 2</div><p class="phase-outcome-text">Un messaggio che convince e un'offerta che regge.</p></div>
+</div></div></div>
+
+<!-- Phase 3 -->
+<div class="phase-card" data-phase="3"><div class="phase-header" onclick="togglePhase(this)"><div class="phase-number">03</div><div class="phase-header-text"><div class="phase-tag">Fase 3 — Il sistema operativo</div><div class="phase-header-title">Decidi una volta, esegui sempre</div></div><div class="phase-weeks-tag">Sett. 5</div><div class="phase-toggle"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+<div class="phase-body"><div class="phase-body-inner">
+<p class="phase-sales-angle">Questa fase ti d&agrave; il QUANDO. Senza sistema, l'AI resta un giocattolo.</p>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 5</span> Operativit&agrave; digitale</div>
+<ul class="week-points">
+<li>La <strong>pesantezza cognitiva</strong> del lavoro digitale</li>
+<li><strong>Settimana a blocchi:</strong> dividi per temi, non per task</li>
+<li>Goal → micro-goal → task — <strong>sai gi&agrave; cosa fare</strong></li>
+<li><strong>La regola del NO</strong> — protezione dalle distrazioni</li>
+<li>Setup: <strong>Google Calendar + task management</strong></li>
+</ul></div>
+<div class="phase-outcome"><div class="phase-outcome-label">&#10003; Cosa hai alla fine della fase 3</div><p class="phase-outcome-text">Una settimana strutturata per usare l'AI in modo produttivo.</p></div>
+</div></div></div>
+
+<!-- Phase 4 -->
+<div class="phase-card" data-phase="4"><div class="phase-header" onclick="togglePhase(this)"><div class="phase-number">04</div><div class="phase-header-text"><div class="phase-tag">Fase 4 — Contenuti che ti fanno scegliere</div><div class="phase-header-title">La tua voce, alla velocit&agrave; dell'AI</div></div><div class="phase-weeks-tag">Sett. 6–7</div><div class="phase-toggle"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+<div class="phase-body"><div class="phase-body-inner">
+<p class="phase-sales-angle">I tuoi 20 anni di esperienza + la velocit&agrave; dell'AI = contenuti che nessun concorrente pu&ograve; replicare.</p>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 6</span> Come essere interessanti</div>
+<ul class="week-points">
+<li><strong>I primi 3 secondi:</strong> se li perdi, il pollice &egrave; gi&agrave; andato</li>
+<li>5 tipi di hook per professionisti</li>
+<li><strong>Struttura 60–90 secondi:</strong> hook → problema → insight → chiusura</li>
+<li>L'AI trasforma un caso in contenuto strutturato</li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Storytelling, generazione hook, strutturazione narrativa</div></div>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 7</span> L'AI come estensione cognitiva</div>
+<ul class="week-points">
+<li>Come funzionano <strong>davvero</strong> gli algoritmi</li>
+<li><strong>L'AI pensa CON te.</strong> La differenza &egrave; enorme.</li>
+<li>Le 4 skill: Creative Curation, Pattern Bridging, Intuitive Selection, Narrative Synthesis</li>
+<li>I <strong>3 pilastri</strong> — Autorit&agrave;, Empatia, Metodo</li>
+<li><strong>Piano 90 giorni</strong> autocompilato</li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Content creation workflow, prompt engineering avanzato</div></div>
+<div class="phase-outcome"><div class="phase-outcome-label">&#10003; Cosa hai alla fine della fase 4</div><p class="phase-outcome-text">Un metodo per creare contenuti con la tua voce, in met&agrave; del tempo.</p></div>
+</div></div></div>
+
+<!-- Phase 5 Bonus -->
+<div class="phase-card" data-phase="5"><div class="phase-header" onclick="togglePhase(this)"><div class="phase-number">&#9733;</div><div class="phase-header-text"><div class="phase-tag">Bonus — LinkedIn una volta sola</div><div class="phase-header-title">Sistemalo e dimenticalo</div></div><div class="phase-weeks-tag">Sett. 8</div><div class="phase-toggle"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></div>
+<div class="phase-body"><div class="phase-body-inner">
+<p class="phase-sales-angle">LinkedIn esce primo su Google. Se il profilo &egrave; vuoto, la fiducia si rompe l&igrave;.</p>
+<div class="week-block"><div class="week-block-title"><span class="wnum">SETT 8</span> Sistema LinkedIn con l'AI</div>
+<ul class="week-points">
+<li>Un profilo che <strong>conferma chi sei</strong></li>
+<li>L'AI riscrive headline, about, esperienze — <strong>tutto coerente</strong></li>
+<li>Lo sistemi una volta e <strong>non ci pensi pi&ugrave;</strong></li>
+<li>2 lezioni da 90 minuti + Q&amp;A</li>
+</ul>
+<div class="ai-skill-inline"><span class="ai-icon">AI</span> Ottimizzazione profilo LinkedIn, copy coerente</div></div>
+<div class="phase-outcome"><div class="phase-outcome-label">&#10003; Fine del bonus</div><p class="phase-outcome-text">Un profilo LinkedIn che lavora per te anche quando dormi.</p></div>
+</div></div></div>
+
+</div></section>
+
+<div class="divider"></div>
+
+<!-- JOURNEY -->
+<section><div class="container">
+<div class="section-icon">&#10022;</div>
+<div class="section-label">Il percorso AI</div>
+<div class="section-title">Ogni settimana una nuova skill.</div>
+<div class="section-subtitle">Alla fine pensi con l'AI.</div>
+<p class="section-desc">Non impari a &ldquo;usare un tool&rdquo;. Impari a pensare con l'intelligenza artificiale.</p>
+<div class="journey-grid">
+<div class="journey-card"><div class="journey-week">Settimana 1–2</div><div class="journey-title">L'AI come specchio</div><div class="journey-desc">Vedi come ti percepisce il mercato.</div></div>
+<div class="journey-card"><div class="journey-week">Settimana 3–4</div><div class="journey-title">L'AI come focus group</div><div class="journey-desc">Testi messaggio e offerta.</div></div>
+<div class="journey-card"><div class="journey-week">Settimana 5</div><div class="journey-title">Il sistema operativo</div><div class="journey-desc">L'AI diventa parte del workflow.</div></div>
+<div class="journey-card"><div class="journey-week">Settimana 6–7</div><div class="journey-title">L'AI come co-creatore</div><div class="journey-desc">Contenuti con la tua voce alla velocit&agrave; dell'AI.</div></div>
+<div class="journey-card"><div class="journey-week">Settimana 8</div><div class="journey-title">L'AI per LinkedIn</div><div class="journey-desc">Setup professionale una tantum.</div></div>
+<div class="journey-card highlight"><div class="journey-week">Dopo il corso</div><div class="journey-title">AI come superpotere</div><div class="journey-desc">Metodo replicabile. L'AI amplifica i tuoi 20 anni.</div></div>
+<div class="journey-card highlight"><div class="journey-week">Il vantaggio</div><div class="journey-title">Nessuno pu&ograve; copiarti</div><div class="journey-desc">La tua esperienza + l'AI = inimitabile.</div></div>
+<div class="journey-card green-hl"><div class="journey-week">Il risultato</div><div class="journey-title">I clienti ti cercano</div><div class="journey-desc">Non li insegui pi&ugrave;.</div></div>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- TRANSFORMATION -->
+<section><div class="container">
+<div class="section-icon">&#10022;</div>
+<div class="section-label">La trasformazione</div>
+<div class="section-title">Il cambio concreto</div>
+<div class="transform-grid">
+<div class="transform-card before"><div class="transform-label">Prima</div>
+<ul class="transform-items">
+<li>Non sai cosa dire online</li>
+<li>L'AI scrive roba generica</li>
+<li>&ldquo;Instagram non funziona per me&rdquo;</li>
+<li>Non hai tempo per i social</li>
+<li>Ti senti indietro sull'AI</li>
+<li>Ogni cliente nuovo &egrave; una fatica</li>
+</ul></div>
+<div class="transform-arrow">→</div>
+<div class="transform-card after"><div class="transform-label">Dopo</div>
+<ul class="transform-items">
+<li>Messaggio chiaro in 5 secondi</li>
+<li>Contenuti con la tua voce in met&agrave; tempo</li>
+<li>Un sistema che attrae il cliente giusto</li>
+<li>Settimana organizzata con blocchi</li>
+<li>Sai usare l'AI come un professionista</li>
+<li>I clienti ti trovano</li>
+</ul></div>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- IL VALORE DEL GRUPPO -->
+<section class="group-section"><div class="container">
+<div class="group-grid">
+<div class="group-img"><img src="https://cuadroacademy.com/wp-content/uploads/2026/01/Frame-37.png" alt="Video call di gruppo" loading="lazy"></div>
+<div class="group-text">
+<h3>Il valore del gruppo</h3>
+<div class="subtitle">(quello giusto)</div>
+<p>&Egrave; una classe ristretta, selezionata, di professionisti con lo stesso livello di maturit&agrave;.</p>
+<p style="font-weight:700;font-size:1.1rem;color:var(--text-dark);margin-bottom:14px">Questo significa:</p>
+<ul class="group-list">
+<li>confronti utili</li>
+<li>problemi simili ai tuoi</li>
+<li>esempi reali, non casi teorici</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- AFFIANCAMENTO -->
+<section class="mentoring-section"><div class="container">
+<div class="mentoring-inner">
+<div class="mentoring-eyebrow">Il valore dell'affiancamento</div>
+<div class="mentoring-quote">L'affiancamento &egrave; il cuore del percorso.</div>
+<p class="mentoring-desc">Puoi comprare un corso e guardarlo da solo. Puoi leggere un libro e sottolinearlo. Ma nessun corso ti dice <strong>&ldquo;qui stai sbagliando angolo&rdquo;</strong> mentre lo stai facendo.</p>
+<p class="mentoring-desc">In SISTEMA ACLAS non ricevi solo contenuti. Ricevi <strong>occhi esperti sul tuo caso</strong>, correzioni in tempo reale, e la certezza che ogni passo che fai &egrave; quello giusto — non quello che &ldquo;sembra&rdquo; giusto.</p>
+<p class="mentoring-desc">La differenza tra chi finisce un percorso e chi lo trasforma in risultati? <strong>Qualcuno che ti guarda lavorare e ti dice la verit&agrave;.</strong></p>
+<div class="mentoring-highlight">Non impari da solo. Costruisci con qualcuno accanto.</div>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- PERCH&Eacute; 20 POSTI -->
+<section class="why20-section"><div class="container">
+<div class="why20-grid">
+<div class="why20-icon"><img src="https://cuadroacademy.com/wp-content/uploads/2025/07/aceSpagni_portrait-low.jpg" alt="20 posti" loading="lazy"></div>
+<div class="why20-content">
+<h3>Perch&eacute; solo 20 posti?</h3>
+<h4>SISTEMA ACLAS &egrave; costruito sull'attenzione ai particolari:</h4>
+<ul class="why20-list">
+<li>lavoro sul tuo progetto/caso reale</li>
+<li>feedback diretti</li>
+<li>applicazione guidata</li>
+<li>settimana dopo settimana</li>
+</ul>
+<p>Con pi&ugrave; persone, questo non sarebbe possibile.</p>
+<p>20 posti sono il numero massimo che permette di seguire ogni partecipante con <strong>attenzione reale</strong>.</p>
+<div class="why20-closer">Perch&eacute; qui non stai guardando un video. Stai costruendo qualcosa di tuo, con qualcuno accanto.</div>
+</div>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- BONUS INCLUSI -->
+<section class="bonus-section"><div class="container">
+<div class="section-icon">&#127381;</div>
+<div class="section-label">Bonus inclusi</div>
+<div class="section-title">Questi li ricevi gratis</div>
+<div class="section-subtitle">(GRATUITI)</div>
+
+<div class="bonus-grid">
+<div class="bonus-card">
+<img class="bonus-card-img" src="https://cuadroacademy.com/wp-content/uploads/2026/01/dd1b5695320dc71ca61fefbeca19da6bb9cdb1c5.webp" alt="AI Unlocked" loading="lazy">
+<div class="bonus-card-body" onclick="toggleBonus(this.parentElement)">
+<div class="bonus-card-title">AI UNLOCKED</div>
+<p class="bonus-card-desc">La formazione per usare AI nel tuo lavoro quotidiano e moltiplicare la tua produttivit&agrave;.</p>
+<span class="bonus-toggle-btn" aria-label="Espandi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+</div>
+<div class="bonus-expand"><div class="bonus-expand-inner">
+<div class="bonus-expand-title">Cos'&egrave; AI Unlocked?</div>
+<p class="bonus-expand-desc">&Egrave; il mio corso completo sull'intelligenza artificiale applicata al business. Imparerai a usare ChatGPT, Claude e altri strumenti per automatizzare task ripetitivi.</p>
+<div class="bonus-value">Valore: <strong>297 euro</strong> — <span class="free">Incluso gratuitamente.</span></div>
+</div></div>
+</div>
+
+<div class="bonus-card">
+<img class="bonus-card-img" src="https://cuadroacademy.com/wp-content/uploads/2026/01/152625367af6df8f166407ed68b00c7cb132603e.jpg" alt="Clone AI System" loading="lazy">
+<div class="bonus-card-body" onclick="toggleBonus(this.parentElement)">
+<div class="bonus-card-title">CLONE AI SYSTEM</div>
+<p class="bonus-card-desc">Il sistema per clonare la tua voce e il tuo stile di comunicazione con l'intelligenza artificiale.</p>
+<span class="bonus-toggle-btn" aria-label="Espandi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+</div>
+<div class="bonus-expand"><div class="bonus-expand-inner">
+<div class="bonus-expand-title">Come funziona Clone AI System?</div>
+<p class="bonus-expand-desc">Ti guido passo passo nella creazione di un assistente AI che scrive esattamente come te. Niente pi&ugrave; contenuti generici che sembrano scritti da un robot.</p>
+<div class="bonus-value">Valore: <strong>197 euro</strong> — <span class="free">Incluso gratuitamente.</span></div>
+</div></div>
+</div>
+
+<div class="bonus-card">
+<img class="bonus-card-img" src="https://cuadroacademy.com/wp-content/uploads/2026/01/5bc5201b39e8fb56e08e14dd74d4928250468dd7-scaled.webp" alt="Libreria Digitale" loading="lazy">
+<div class="bonus-card-body" onclick="toggleBonus(this.parentElement)">
+<div class="bonus-card-title">LIBRERIA DIGITALE</div>
+<p class="bonus-card-desc">Una raccolta esclusiva di template, prompt e risorse pronte all'uso per il tuo business.</p>
+<span class="bonus-toggle-btn" aria-label="Espandi"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5L7 9L11 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+</div>
+<div class="bonus-expand"><div class="bonus-expand-inner">
+<div class="bonus-expand-title">Cosa trovi nella Libreria Digitale?</div>
+<p class="bonus-expand-desc">Oltre 50 template pronti per email, landing page, post social e molto altro. Pi&ugrave; una raccolta di prompt testati per ogni situazione.</p>
+<div class="bonus-value">Valore: <strong>147 euro</strong> — <span class="free">Incluso gratuitamente.</span></div>
+</div></div>
+</div>
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- FAQ -->
+<section class="faq-section"><div class="container">
+<div class="section-icon">&#128172;</div>
+<div class="section-title">Hai delle <em>domande?</em></div>
+<p class="section-desc">Abbiamo gi&agrave; delle risposte. Altrimenti scrivici su info@cuadroacademy.com</p>
+
+<div class="faq-list">
+
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question"><span>A chi si rivolge SISTEMA ACLAS? Sono adatto?</span><div class="faq-plus">+</div></div>
+<div class="faq-answer"><div class="faq-answer-inner">&Egrave; per professionisti, consulenti, freelance e imprenditori che hanno esperienza reale ma faticano a comunicarla online. Se hai competenza ma non visibilit&agrave;, sei nel posto giusto. Non serve essere tecnici e non serve essere gi&agrave; presenti sui social.</div></div></div>
+
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question"><span>Qual &egrave; la metodologia di insegnamento?</span><div class="faq-plus">+</div></div>
+<div class="faq-answer"><div class="faq-answer-inner">Ogni settimana: <strong>1 lezione live da 90 minuti</strong> + <strong>1 sessione Q&amp;A da 60 minuti.</strong> Non &egrave; teoria. Ogni lezione ha un output concreto che costruisci con l'AI durante la settimana. Il percorso &egrave; progressivo: prima le fondamenta (chi sei, cosa dici), poi il sistema (come lo fai), poi la visibilit&agrave; (contenuti + LinkedIn).</div></div></div>
+
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question"><span>Quanto tempo mi serve ogni settimana?</span><div class="faq-plus">+</div></div>
+<div class="faq-answer"><div class="faq-answer-inner">Circa <strong>4–5 ore a settimana</strong>: 90 minuti di lezione, 60 minuti di Q&amp;A, e 2–3 ore di applicazione pratica. S&igrave;, &egrave; un investimento di tempo reale — ma &egrave; un investimento che si ripaga. Stai costruendo un sistema che dopo le 8 settimane <strong>ti far&agrave; risparmiare decine di ore ogni mese</strong>: niente pi&ugrave; blocchi creativi, niente pi&ugrave; tempo perso a fissare lo schermo, niente pi&ugrave; contenuti riscritti 10 volte. <em>8 settimane di impegno per mesi (e anni) di tempo liberato.</em> Le lezioni sono registrate, quindi puoi recuperare — ma il valore vero &egrave; nella partecipazione live.</div></div></div>
+
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question"><span>Devo spendere soldi per tool AI?</span><div class="faq-plus">+</div></div>
+<div class="faq-answer"><div class="faq-answer-inner">La maggior parte dei tool che usiamo ha una <strong>versione gratuita</strong> con cui puoi iniziare e sperimentare. Se vuoi il massimo, l'investimento &egrave; di circa <strong>20–50 euro al mese</strong> — meno di una cena fuori. Ma la domanda vera &egrave; un'altra: <em>se non vuoi investire neanche 50 euro al mese negli strumenti che ti fanno lavorare meglio, risparmiare tempo e attrarre clienti... cosa stai imparando a fare?</em> L'AI non &egrave; un costo. &Egrave; un moltiplicatore del tuo valore.</div></div></div>
+
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question"><span>I contenuti vengono aggiornati regolarmente?</span><div class="faq-plus">+</div></div>
+<div class="faq-answer"><div class="faq-answer-inner">S&igrave;. L'AI cambia ogni settimana e noi restiamo aggiornati. Le lezioni sono sempre allineate agli strumenti pi&ugrave; recenti. Non impari cose che saranno obsolete tra un mese — impari un <strong>metodo</strong> che si adatta a qualsiasi strumento.</div></div></div>
+
+<div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question"><span>E se non ho mai usato l'AI?</span><div class="faq-plus">+</div></div>
+<div class="faq-answer"><div class="faq-answer-inner">Ancora meglio. Cos&igrave; impari a usarla bene <strong>da subito</strong>, senza cattive abitudini. Il percorso parte da zero e ti porta a usare l'AI come un professionista. L'unica cosa che serve &egrave; la tua esperienza — quella ce l'hai gi&agrave;.</div></div></div>
+
+</div>
+</div></section>
+
+<div class="divider"></div>
+
+<!-- CTA STATS -->
+<section class="cta-section"><div class="container">
+<div class="section-icon">&#10022;</div>
+<h2 class="cta-title serif">La tua <span style="color:var(--purple)">esperienza</span> merita<br>di essere vista.</h2>
+<p class="cta-sub">Non ti trasformiamo in un creator. Ti diamo un sistema per far arrivare il tuo valore alle persone giuste — con l'AI come moltiplicatore.</p>
+<div class="cta-stats">
+<div><span class="cta-stat-num" style="color:var(--phase1)">8</span><span class="cta-stat-label">Settimane</span></div>
+<div><span class="cta-stat-num" style="color:var(--phase2)">8</span><span class="cta-stat-label">Lezioni 90'</span></div>
+<div><span class="cta-stat-num" style="color:var(--phase3)">8</span><span class="cta-stat-label">Q&amp;A 60'</span></div>
+<div><span class="cta-stat-num" style="color:var(--phase4)">+4h</span><span class="cta-stat-label">Bonus LinkedIn</span></div>
+<div><span class="cta-stat-num" style="color:var(--phase5)">100%</span><span class="cta-stat-label">AI integrata</span></div>
+</div>
+</div></section>
+
+<!-- BIG CTA -->
+<section class="cta-final"><div class="container"><div class="cta-final-inner">
+<div class="cta-final-title">Pronto a costruire il tuo sistema?</div>
+<p class="cta-final-sub">8 settimane. La tua esperienza + l'AI. Zero fuffa, solo risultati concreti.</p>
+<a href="#INSERISCI-LINK-PAGAMENTO" class="cta-big-btn"><span>Voglio il mio posto</span><span class="btn-arrow">→</span></a>
+<div class="cta-guarantee">&#128274; Pagamento sicuro — Posti limitati</div>
+</div></div></section>
+
+<!-- FOOTER -->
+<footer class="site-footer"><div class="container">
+<div class="footer-links">
+<a href="https://cuadroacademy.com/privacy-policy/">Privacy Policy</a>
+<a href="https://cuadroacademy.com/terms-conditions/">Termini e Condizioni</a>
+<a href="mailto:info@cuadroacademy.com">info@cuadroacademy.com</a>
+</div>
+<div class="footer-copy">&copy; 2026 Cuadro Academy. Tutti i diritti riservati.</div>
+</div></footer>
+
+<script>
+function togglePhase(header){var card=header.parentElement;var body=card.querySelector('.phase-body');var isOpen=card.className.indexOf('open')!==-1;var all=document.querySelectorAll('.phase-card');for(var i=0;i<all.length;i++){all[i].className=all[i].className.replace(' open','');all[i].querySelector('.phase-body').style.maxHeight='0'}if(!isOpen){card.className+=' open';body.style.maxHeight=body.scrollHeight+'px'}}
+
+function toggleBonus(card){
+var all=document.querySelectorAll('.bonus-card');
+var isOpen=card.classList.contains('open');
+// Close all cards
+for(var i=0;i<all.length;i++){
+  all[i].classList.remove('open');
+}
+// Open clicked card if it wasn't already open
+if(!isOpen){
+  card.classList.add('open');
+}
+}
+
+function toggleFaq(item){var isOpen=item.className.indexOf('open')!==-1;var all=document.querySelectorAll('.faq-item');for(var i=0;i<all.length;i++){all[i].className=all[i].className.replace(' open','')}if(!isOpen){item.className+=' open'}}
+
+var weekData={1:{phase:'Fase 1',color:'#8b5cf6',teacher:'Ace',title:'Cosa Dici',dur:'90 min lezione + 60 min Q&A',topics:["L'AI legge il tuo Canvas come un cliente vero","Mirroring AI — vedi il gap tra ciò che pensi e ciò che arriva","Riscrittura guidata delle caselle deboli","Canvas visivo interattivo generato con l'AI"],aiT:'AI Mirroring',aiD:"Dai contesto all'AI e usala come simulatore di prospettiva."},2:{phase:'Fase 1',color:'#8b5cf6',teacher:'Ace',title:'Come lo Dici',dur:'90 min lezione + 60 min Q&A',topics:["Test delle 3 versioni — trova la tua voce","Voce vs Maschera","Carta d'identità del tono di voce in 5 punti","3 versioni: 5 sec, 30 sec, 2 min"],aiT:'AI Voice Discovery',aiD:"L'AI analizza il tuo linguaggio naturale e ti restituisce la tua voce codificata."},3:{phase:'Fase 2',color:'#3b82f6',teacher:'Ace',title:'Il Messaggio Completo',dur:'90 min lezione + 60 min Q&A',topics:["Framework StoryBrand — 7 pezzi","Trovare il problema INTERNO del cliente","L'AI simula il tuo cliente ideale","Focus group in 5 minuti"],aiT:'AI Focus Group',aiD:"L'AI diventa il tuo cliente ideale. Ti dice cosa ha capito e dove ti ha perso."},4:{phase:'Fase 2',color:'#3b82f6',teacher:'Edu',title:'Posizionamento + Offerta',dur:'90 min lezione + 60 min Q&A',topics:['Dal messaggio al posizionamento','Offerta con 5 elementi chiari',"Stress test con l'AI",'Pagina offerta di 1 pagina'],aiT:'AI Stress Test',aiD:"L'AI simula il cliente scettico. La tua offerta regge prima di uscire."},5:{phase:'Fase 3',color:'#10b981',teacher:'Ace',title:'Operatività Digitale',dur:'90 min lezione + 60 min Q&A',topics:['Pesantezza cognitiva','Settimana a blocchi','Goal → micro-goal → task','Google Calendar + task management'],aiT:'Sistema Operativo',aiD:"L'AI diventa parte del tuo workflow."},6:{phase:'Fase 4',color:'#f97316',teacher:'Bruce',title:'Come Essere Interessanti',dur:'90 min lezione + 60 min Q&A',topics:['I primi 3 secondi — hook','Struttura 60-90 secondi','Storytelling per professionisti',"L'AI trasforma casi in storie"],aiT:'AI Storytelling',aiD:"Le tue storie, amplificate dall'AI."},7:{phase:'Fase 4',color:'#f97316',teacher:'Ace',title:'Il Segreto dei Contenuti',dur:'90 min lezione + 60 min Q&A',topics:['Come funzionano gli algoritmi',"L'AI pensa CON te",'4 skill: Creative Curation, Pattern Bridging...','Piano 90 giorni'],aiT:'AI Estensione Cognitiva',aiD:"I tuoi 20 anni + velocità dell'AI = inimitabile."},8:{phase:'Bonus',color:'#ec4899',teacher:'Edu',title:'LinkedIn Setup',dur:'2×90 min + 60 min Q&A',topics:['Profilo coerente col messaggio','Headline, about riscritti',"Sistemi una volta, non ci pensi più",'Conferma per chi ti trova su Instagram'],aiT:'AI LinkedIn Setup',aiD:"L'AI riscrive ogni sezione nel tuo tono di voce."}};
+
+var activeWeek=null;
+var weekGrid=document.getElementById('weekGrid');
+var weekDetail=document.getElementById('weekDetail');
+var weekDetailInner=document.getElementById('weekDetailInner');
+
+if(weekGrid){weekGrid.onclick=function(e){var cell=e.target;while(cell&&!cell.getAttribute('data-week')){cell=cell.parentElement}if(!cell)return;var wn=parseInt(cell.getAttribute('data-week'));var d=weekData[wn];var cells=weekGrid.querySelectorAll('.week-cell');for(var i=0;i<cells.length;i++){cells[i].className=cells[i].className.replace(' active','')}if(activeWeek===wn){activeWeek=null;weekDetail.className='week-detail';return}activeWeek=wn;cell.className+=' active';var html='<div class="detail-left"><span class="detail-phase-tag" style="background:'+d.color+'12;color:'+d.color+';border:1px solid '+d.color+'30">'+d.phase+'</span><h3>Settimana '+wn+' — '+d.title+'</h3><div class="detail-teacher">Docente: <strong>'+d.teacher+'</strong></div><ul class="detail-topics">';for(var j=0;j<d.topics.length;j++){html+='<li>'+d.topics[j]+'</li>'}html+='</ul><div class="detail-format"><span class="format-tag">'+d.dur+'</span></div></div><div class="detail-right"><div class="ai-skill-box"><div class="ai-skill-label">✦ Skill AI della settimana</div><div class="ai-skill-title">'+d.aiT+'</div><div class="ai-skill-desc">'+d.aiD+'</div></div></div>';weekDetailInner.innerHTML=html;weekDetail.className='week-detail open'}}
+</script>
+</body>
+</html>

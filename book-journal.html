@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reflection Journal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background: linear-gradient(180deg, #c9a876 0%, #bfa06c 25%, #d4b482 50%, #c4a574 75%, #b8956a 100%);
+        }
+
+        .scene {
+            perspective: 2500px;
+            transform-origin: center center;
+        }
+
+        .book {
+            position: relative;
+            width: 860px;
+            height: 480px;
+            transform-style: preserve-3d;
+            transform: rotateX(8deg);
+            display: flex;
+        }
+
+        .book-shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 40px;
+            background: rgba(0,0,0,0.2);
+            filter: blur(35px);
+            border-radius: 10px;
+            z-index: -1;
+            transform: scaleY(0.1) translateY(400%);
+        }
+
+        /* Left half - transparent to show flipped page backs */
+        .book-left {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            background: linear-gradient(to left, #e5ddd0 0%, #f2ebe0 100%);
+            border-radius: 10px 0 0 10px;
+            box-shadow: -3px 0 0 #d5cdc0, -6px 0 0 #c5bdb0;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .book-left::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 12px;
+            background: repeating-linear-gradient(180deg, #faf6f0 0px, #faf6f0 1px, #ddd5c8 1px, #ddd5c8 2px);
+        }
+
+        /* Right half */
+        .book-right {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .book-right-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #e5ddd0 0%, #f2ebe0 100%);
+            border-radius: 0 10px 10px 0;
+            box-shadow: 3px 0 0 #d5cdc0, 6px 0 0 #c5bdb0;
+        }
+
+        .book-right-base::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            bottom: 6px;
+            width: 12px;
+            background: repeating-linear-gradient(180deg, #faf6f0 0px, #faf6f0 1px, #ddd5c8 1px, #ddd5c8 2px);
+        }
+
+        /* Spine */
+        .spine {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) translateZ(2px);
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(90deg, #7a6548 0%, #9a8568 30%, #a89578 50%, #9a8568 70%, #7a6548 100%);
+            z-index: 50;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* Page */
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform-origin: left center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .page-front, .page-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background: linear-gradient(to right, #eae4d8 0%, #f8f4ec 5%, #fdfbf8 100%);
+            border-radius: 0 10px 10px 0;
+            box-shadow: inset 5px 0 12px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+
+        .page-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(to left, #eae4d8 0%, #f8f4ec 5%, #fdfbf8 100%);
+            border-radius: 10px 0 0 10px;
+            box-shadow: inset -5px 0 12px rgba(0,0,0,0.03);
+        }
+
+        .page-content {
+            padding: 28px 32px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Flipped pages container (left side) */
+        .flipped-pages {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        /* Drag indicator */
+        .drag-hint {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, transparent 50%, rgba(0,0,0,0.02) 50%);
+            pointer-events: none;
+        }
+
+        .drag-hint-left {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(-135deg, transparent 50%, rgba(0,0,0,0.02) 50%);
+            pointer-events: none;
+        }
+
+        /* Cover */
+        .cover .page-front {
+            background: #f5f3f0;
+        }
+
+        .cover-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .cover-front-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 24px 32px;
+            position: relative;
+        }
+
+        .title-badge {
+            background: #f5d230;
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a1a1a;
+            align-self: flex-end;
+        }
+
+        .cover-brand {
+            margin-top: auto;
+            margin-bottom: auto;
+            padding-left: 20px;
+        }
+
+        .cover-brand-name {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 42px;
+            color: #3a3a3a;
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        .cover-brand-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .cube-logo {
+            width: 64px;
+            height: 64px;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.08));
+        }
+
+        .cover-start-btn {
+            background: #4a9e7e;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 28px;
+            padding: 10px 32px;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Typography */
+        .handwritten {
+            font-family: 'Caveat', cursive;
+            font-size: 19px;
+            line-height: 1.55;
+            color: #3a3530;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 19px;
+            font-weight: 600;
+            color: #2c2520;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #ddd0c0;
+        }
+
+        .lined-bg {
+            background-image: repeating-linear-gradient(transparent, transparent 25px, #e0d4c4 25px, #e0d4c4 26px);
+            flex: 1;
+        }
+
+        .quote-box {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 14px 16px;
+            margin: 10px 0;
+            border-radius: 0 6px 6px 0;
+            font-style: italic;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #4a4035;
+        }
+
+        .checkbox-list {
+            list-style: none;
+        }
+
+        .checkbox-list li {
+            display: flex;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px dashed #ddd0c0;
+            font-size: 12px;
+            color: #3a3530;
+        }
+
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #a09585;
+            border-radius: 3px;
+            margin-right: 10px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .checkbox.checked {
+            background: #22c55e;
+            border-color: #16a34a;
+        }
+
+        .checkbox.checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .date-badge {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-align: center;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .date-badge .day { font-size: 22px; font-weight: 700; line-height: 1; }
+        .date-badge .month { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+
+        .mood-row {
+            display: flex;
+            gap: 6px;
+            margin: 8px 0;
+        }
+
+        .mood-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 4px;
+            background: #faf6f0;
+            border-radius: 6px;
+            font-size: 18px;
+            border: 2px solid transparent;
+        }
+
+        .mood-item.active {
+            background: #fef3c7;
+            border-color: #fbbf24;
+        }
+
+        .mood-item span {
+            display: block;
+            font-size: 8px;
+            color: #6b5b4f;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background: #e8e0d4;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            border-radius: 3px;
+        }
+
+        .highlight {
+            background: linear-gradient(180deg, transparent 55%, #fef08a 55%);
+        }
+
+        .page-num {
+            position: absolute;
+            bottom: 12px;
+            font-size: 10px;
+            color: #a09585;
+        }
+
+        .page-front .page-num { right: 24px; }
+        .page-back .page-num, .left-content .page-num { left: 24px; }
+
+        /* Navigation */
+        .controls {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover { transform: scale(1.1); }
+        .nav-btn:active { transform: scale(0.95); }
+        .nav-btn svg { width: 18px; height: 18px; fill: #5a4a3a; }
+
+        .page-info {
+            background: rgba(255,255,255,0.9);
+            padding: 7px 16px;
+            border-radius: 18px;
+            font-size: 12px;
+            color: #5a4a3a;
+        }
+
+        .hint {
+            position: fixed;
+            top: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 9px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            animation: fadeHint 4s ease 0.5s forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeHint {
+            0%, 100% { opacity: 0; }
+            15%, 85% { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .controls {
+                bottom: 15px;
+                gap: 8px;
+            }
+            .nav-btn {
+                width: 38px;
+                height: 38px;
+            }
+            .page-info {
+                font-size: 11px;
+                padding: 6px 12px;
+            }
+            .hint {
+                font-size: 11px;
+                padding: 7px 16px;
+                top: 12px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .controls {
+                bottom: 10px;
+                gap: 6px;
+            }
+            .nav-btn {
+                width: 34px;
+                height: 34px;
+            }
+            .nav-btn svg {
+                width: 15px;
+                height: 15px;
+            }
+            .page-info {
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+            .hint {
+                font-size: 10px;
+                padding: 6px 14px;
+                top: 8px;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hint">Click or drag pages to flip</div>
+
+    <div class="scene">
+        <div class="book">
+            <div class="book-shadow"></div>
+
+            <div class="book-left" id="bookLeft">
+                <div class="book-left-base"></div>
+                <div class="drag-hint-left"></div>
+            </div>
+
+            <div class="spine"></div>
+
+            <div class="book-right" id="bookRight">
+                <div class="book-right-base"></div>
+
+                <div class="page" data-page="4">
+                    <div class="page-front">
+                        <div class="page-content">
+                            <div class="cover-content">
+                                <div style="text-align: center; color: #6b5b4f; font-family: 'Playfair Display', serif; font-style: italic; font-size: 18px;">Keep Writing.<br>Keep Growing.</div>
+                                <div style="margin-top: 20px; font-size: 11px; color: #a09585;">The End</div>
+                            </div>
+                        </div>
+                        <div class="drag-hint"></div>
+                    </div>
+                    <div class="page-back">
+                        <div class="page-content">
+                            <h2 class="section-title">Notes</h2>
+                            <div class="handwritten lined-bg">Space for your additional thoughts...</div>
+                            <span class="page-num">7</span>
+                        </div>
+                        <div class="drag-hint-left"></div>
+                    </div>
+                </div>
+
+                <div class="page" data-page="3">
+                    <div class="page-front">
+                        <div class="page-content">
+                            <h2 class="section-title">Weekly Review</h2>
+                            <div class="handwritten lined-bg">
+                                <strong style="font-family: Inter; font-size: 11px;">What went well:</strong><br>Completed all tasks<br><br>
+                                <strong style="font-family: Inter; font-size: 11px;">To improve:</strong><br>Morning routine<br><br>
+                                <strong style="font-family: Inter; font-size: 11px;">Next week:</strong><br>Start new project
+                            </div>
+                            <span class="page-num">6</span>
+                        </div>
+                        <div class="drag-hint"></div>
+                    </div>
+                    <div class="page-back">
+                        <div class="page-content">
+                            <h2 class="section-title">Ideas & Dreams</h2>
+                            <div class="quote-box" style="border-color: #6366f1; background: linear-gradient(135deg, #eef2ff, #e0e7ff);">"Creativity is intelligence having fun."</div>
+                            <div class="handwritten lined-bg">- Learn watercolor painting<br><br>- Write a short story<br><br>- Create a vision board</div>
+                            <span class="page-num">5</span>
+                        </div>
+                        <div class="drag-hint-left"></div>
+                    </div>
+                </div>
+
+                <div class="page" data-page="2">
+                    <div class="page-front">
+                        <div class="page-content">
+                            <h2 class="section-title">Gratitude List</h2>
+                            <div class="handwritten lined-bg">1. My supportive family<br><br>2. Good health<br><br>3. Learning opportunities<br><br>4. Morning coffee<br><br>5. Beautiful sunsets</div>
+                            <span class="page-num">4</span>
+                        </div>
+                        <div class="drag-hint"></div>
+                    </div>
+                    <div class="page-back">
+                        <div class="page-content">
+                            <div class="date-badge"><div class="day">15</div><div class="month">January</div></div>
+                            <div class="mood-row">
+                                <div class="mood-item">:)<span>Happy</span></div>
+                                <div class="mood-item active">:D<span>Great</span></div>
+                                <div class="mood-item">:|<span>Okay</span></div>
+                                <div class="mood-item">:(<span>Low</span></div>
+                            </div>
+                            <div class="handwritten lined-bg">Today was <span class="highlight">wonderful</span>!<br><br>Finally finished the project.</div>
+                            <span class="page-num">3</span>
+                        </div>
+                        <div class="drag-hint-left"></div>
+                    </div>
+                </div>
+
+                <div class="page" data-page="1">
+                    <div class="page-front">
+                        <div class="page-content">
+                            <h2 class="section-title">Monthly Goals</h2>
+                            <ul class="checkbox-list">
+                                <li><span class="checkbox checked"></span>Start morning meditation</li>
+                                <li><span class="checkbox checked"></span>Read 2 books</li>
+                                <li><span class="checkbox"></span>Complete online course</li>
+                                <li><span class="checkbox"></span>Practice gratitude daily</li>
+                                <li><span class="checkbox"></span>Exercise 3x per week</li>
+                            </ul>
+                            <div style="margin-top: 12px;">
+                                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #6b5b4f;"><span>Progress</span><span>40%</span></div>
+                                <div class="progress-bar"><div class="progress-fill" style="width: 40%"></div></div>
+                            </div>
+                            <span class="page-num">2</span>
+                        </div>
+                        <div class="drag-hint"></div>
+                    </div>
+                    <div class="page-back">
+                        <div class="page-content">
+                            <h2 class="section-title">Welcome</h2>
+                            <div class="quote-box">"The journey of a thousand miles begins with a single step." - Lao Tzu</div>
+                            <div class="handwritten lined-bg">This journal belongs to you.<br><br>Use it to capture your thoughts and reflections.</div>
+                            <span class="page-num">1</span>
+                        </div>
+                        <div class="drag-hint-left"></div>
+                    </div>
+                </div>
+
+                <div class="page cover" data-page="0">
+                    <div class="page-front">
+                        <div class="cover-front-layout">
+                            <div class="title-badge">My Reflection Journal</div>
+                            <div class="cover-brand">
+                                <div class="cover-brand-name">Well4U</div>
+                                <div class="cover-brand-row">
+                                    <svg class="cube-logo" viewBox="0 0 100 100">
+                                        <!-- Outer hexagon faces -->
+                                        <polygon points="50,5 93,28 93,72 50,95 7,72 7,28" fill="none"/>
+                                        <!-- Top face - purple -->
+                                        <polygon points="50,5 93,28 50,50 7,28" fill="#6b5b95"/>
+                                        <!-- Bottom-left face - teal -->
+                                        <polygon points="7,28 50,50 50,95 7,72" fill="#45b5aa"/>
+                                        <!-- Bottom-right face - coral/red -->
+                                        <polygon points="93,28 50,50 50,95 93,72" fill="#e8654a"/>
+                                        <!-- Inner hexagon - yellow center -->
+                                        <polygon points="50,30 72,42 72,64 50,76 28,64 28,42" fill="#f5c842"/>
+                                        <!-- Inner left face - orange -->
+                                        <polygon points="28,42 50,54 50,76 28,64" fill="#e8941a"/>
+                                        <!-- Inner top - lighter purple -->
+                                        <polygon points="50,30 72,42 50,54 28,42" fill="#7b6ba5"/>
+                                        <!-- Inner right face - green tint -->
+                                        <polygon points="72,42 50,54 50,76 72,64" fill="#45b5aa"/>
+                                    </svg>
+                                    <div class="cover-start-btn">Start</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="drag-hint"></div>
+                    </div>
+                    <div class="page-back">
+                        <div class="page-content">
+                            <div class="cover-content">
+                                <span style="color: #bbb; font-size: 12px;">Inside Cover</span>
+                            </div>
+                        </div>
+                        <div class="drag-hint-left"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="nav-btn" id="prevBtn"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+        <div class="page-info">Page <span id="currentPage">Cover</span></div>
+        <button class="nav-btn" id="nextBtn"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg></button>
+    </div>
+
+    <script>
+        const pages = Array.from(document.querySelectorAll('.page'));
+        const bookRight = document.getElementById('bookRight');
+        const bookLeft = document.getElementById('bookLeft');
+        const totalPages = pages.length;
+
+        let currentIdx = 0;
+        let isFlipping = false;
+        let dragStartX = 0;
+        let isDragging = false;
+        let dragPage = null;
+        let dragDir = null;
+
+        // Initialize pages - set z-index based on data-page (cover on top)
+        // Unflipped pages get z-index 50+ (higher), flipped pages get 1-49 (lower)
+        function initPages() {
+            pages.forEach((p) => {
+                const pageNum = +p.dataset.page;
+                gsap.set(p, {
+                    zIndex: 50 + (totalPages - pageNum),
+                    rotationY: 0
+                });
+            });
+        }
+
+        function updateInfo() {
+            const labels = ['Cover', '1-2', '3-4', '5-6', '7-End'];
+            document.getElementById('currentPage').textContent = labels[currentIdx] || '';
+        }
+
+        function getTopPage() {
+            // Get the page that should be on top (current unflipped page)
+            return pages.find(p => +p.dataset.page === currentIdx);
+        }
+
+        function getLastFlippedPage() {
+            // Get the last flipped page (for flipping back)
+            if (currentIdx <= 0) return null;
+            return pages.find(p => +p.dataset.page === currentIdx - 1);
+        }
+
+        function flipForward(fromDrag = false) {
+            if (isFlipping || currentIdx >= totalPages) return;
+
+            const page = getTopPage();
+            if (!page) return;
+
+            isFlipping = true;
+            gsap.set(page, { zIndex: 100 });
+
+            gsap.to(page, {
+                rotationY: -180,
+                duration: fromDrag ? 0.5 : 0.6,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    // Flipped pages stack in reverse order (most recent flip on top)
+                    gsap.set(page, { zIndex: currentIdx + 1 });
+                    currentIdx++;
+                    updateInfo();
+                    isFlipping = false;
+                }
+            });
+        }
+
+        function flipBack(fromDrag = false) {
+            if (isFlipping || currentIdx <= 0) return;
+
+            const page = getLastFlippedPage();
+            if (!page) return;
+
+            isFlipping = true;
+            gsap.set(page, { zIndex: 100 });
+
+            gsap.to(page, {
+                rotationY: 0,
+                duration: fromDrag ? 0.35 : 0.6,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    currentIdx--;
+                    // Put it back in the unflipped stack (higher z-index)
+                    gsap.set(page, { zIndex: 50 + (totalPages - currentIdx) });
+                    updateInfo();
+                    isFlipping = false;
+                }
+            });
+        }
+
+        // Drag handlers
+        function startDrag(e, dir) {
+            if (isFlipping) return;
+
+            if (dir === 'forward' && currentIdx >= totalPages) return;
+            if (dir === 'back' && currentIdx <= 0) return;
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            dragStartX = clientX;
+            isDragging = true;
+            dragDir = dir;
+
+            if (dir === 'forward') {
+                dragPage = getTopPage();
+            } else {
+                dragPage = getLastFlippedPage();
+            }
+
+            if (dragPage) {
+                gsap.set(dragPage, { zIndex: 100 });
+            }
+
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchmove', onDrag, { passive: false });
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function onDrag(e) {
+            if (!isDragging || !dragPage) return;
+            e.preventDefault();
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const delta = dragStartX - clientX;
+
+            if (dragDir === 'forward') {
+                // Drag left to flip forward
+                const dragRange = 500 * currentScale;
+                const progress = Math.max(0, Math.min(1, delta / dragRange));
+                gsap.set(dragPage, { rotationY: -180 * progress });
+            } else {
+                // Drag right to flip back
+                const dragRange = 500 * currentScale;
+                const progress = Math.max(0, Math.min(1, -delta / dragRange));
+                gsap.set(dragPage, { rotationY: -180 + (180 * progress) });
+            }
+        }
+
+        function endDrag(e) {
+            if (!isDragging) return;
+
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchmove', onDrag);
+            document.removeEventListener('touchend', endDrag);
+
+            const clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+            const delta = dragStartX - clientX;
+            const threshold = 80 * currentScale; // pixels to trigger flip, scaled
+
+            isDragging = false;
+
+            if (!dragPage) {
+                dragDir = null;
+                return;
+            }
+
+            if (dragDir === 'forward') {
+                if (delta > threshold) {
+                    // Complete the flip
+                    flipForward(true);
+                } else {
+                    // Snap back
+                    gsap.to(dragPage, {
+                        rotationY: 0,
+                        duration: 0.35,
+                        ease: 'power2.out',
+                        onComplete: () => {
+                            gsap.set(dragPage, { zIndex: 50 + (totalPages - currentIdx) });
+                        }
+                    });
+                }
+            } else {
+                if (-delta > threshold) {
+                    // Complete the flip back
+                    flipBack(true);
+                } else {
+                    // Snap back to flipped position
+                    gsap.to(dragPage, {
+                        rotationY: -180,
+                        duration: 0.35,
+                        ease: 'power2.out',
+                        onComplete: () => {
+                            gsap.set(dragPage, { zIndex: currentIdx });
+                        }
+                    });
+                }
+            }
+
+            dragPage = null;
+            dragDir = null;
+        }
+
+        // Get the book element for position calculations
+        const book = document.querySelector('.book');
+
+        // Determine drag direction based on mouse position relative to book center
+        function getDragDirection(clientX) {
+            const bookRect = book.getBoundingClientRect();
+            const bookCenterX = bookRect.left + bookRect.width / 2;
+            return clientX < bookCenterX ? 'back' : 'forward';
+        }
+
+        // Handle drag start on book-right (where all pages live)
+        function handleBookRightMouseDown(e) {
+            if (!e.target.closest('.page')) return;
+
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const dir = getDragDirection(clientX);
+            startDrag(e, dir);
+        }
+
+        bookRight.addEventListener('mousedown', handleBookRightMouseDown);
+        bookRight.addEventListener('touchstart', handleBookRightMouseDown, { passive: false });
+
+        // Also allow drag from the left background area
+        bookLeft.addEventListener('mousedown', e => {
+            startDrag(e, 'back');
+        });
+        bookLeft.addEventListener('touchstart', e => {
+            startDrag(e, 'back');
+        }, { passive: false });
+
+        // Click to flip - forward on right side, backward on left side
+        function handlePageClick(e) {
+            if (isFlipping || isDragging) return;
+
+            const clientX = e.clientX;
+            const dir = getDragDirection(clientX);
+
+            const page = e.target.closest('.page');
+            if (!page) return;
+
+            if (dir === 'forward') {
+                // Click on right side - flip forward
+                const pageNum = +page.dataset.page;
+                if (pageNum === currentIdx) {
+                    e.stopPropagation();
+                    flipForward();
+                }
+            } else {
+                // Click on left side - flip backward
+                const pageNum = +page.dataset.page;
+                if (pageNum === currentIdx - 1) {
+                    e.stopPropagation();
+                    flipBack();
+                }
+            }
+        }
+
+        bookRight.addEventListener('click', handlePageClick);
+
+        // Click on left background area to flip back
+        bookLeft.addEventListener('click', e => {
+            if (isFlipping || isDragging) return;
+            if (currentIdx > 0) {
+                flipBack();
+            }
+        });
+
+        // Nav buttons
+        document.getElementById('nextBtn').addEventListener('click', () => flipForward());
+        document.getElementById('prevBtn').addEventListener('click', () => flipBack());
+
+        // Keyboard
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') flipForward();
+            if (e.key === 'ArrowLeft') flipBack();
+        });
+
+        // Responsive scaling
+        const scene = document.querySelector('.scene');
+        let currentScale = 1;
+
+        function resizeBook() {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const bookWidth = 860;
+            const bookHeight = 480;
+            const controlsSpace = 70;
+
+            const scaleX = (vw * 0.95) / bookWidth;
+            const scaleY = ((vh - controlsSpace) * 0.9) / bookHeight;
+            currentScale = Math.min(scaleX, scaleY, 1);
+
+            scene.style.transform = 'scale(' + currentScale + ')';
+        }
+
+        window.addEventListener('resize', resizeBook);
+
+        // Initialize
+        initPages();
+        updateInfo();
+        resizeBook();
+    </script>
+</body>
+</html>

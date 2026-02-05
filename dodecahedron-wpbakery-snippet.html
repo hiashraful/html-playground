@@ -1,0 +1,925 @@
+<style>
+.w4u-dodeca-section {
+    width: 100%;
+    min-height: 600px;
+    height: 80vh;
+    max-height: 900px;
+    position: relative;
+    background: transparent;
+    overflow: hidden;
+}
+.w4u-dodeca-section * { box-sizing: border-box; }
+.w4u-dodeca-canvas { width: 100%; height: 100%; touch-action: none; }
+.w4u-dodeca-tooltip {
+    position: absolute;
+    background: linear-gradient(145deg, #ffffff 0%, #f5f7fa 50%, #e8ecf1 100%); /* default, overridden by JS */
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+    width: 240px;
+    max-width: 240px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+    font-family: 'Manrope', sans-serif;
+}
+.w4u-dodeca-tooltip.visible { opacity: 1; visibility: visible; pointer-events: auto; }
+.w4u-dodeca-tooltip-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: #ffffff;
+    border-radius: 50%;
+    font-size: 22px;
+    line-height: 1;
+    color: #000;
+    cursor: pointer;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    font-weight: 700;
+}
+.w4u-dodeca-tooltip-close:hover { background: #f0f0f0; }
+.w4u-dodeca-tooltip-number {
+    width: 44px;
+    height: 44px;
+    border: 3px solid rgba(51,51,51,0.8);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 auto 16px auto;
+    background: transparent;
+}
+.w4u-dodeca-tooltip-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.3;
+}
+.w4u-dodeca-tooltip-description {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+.w4u-dodeca-tooltip-qr {
+    background: rgba(255,255,255,0.25);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+}
+.w4u-dodeca-tooltip-qr img {
+    width: 80px;
+    height: 80px;
+    display: block;
+    margin: 0 auto 6px;
+    border-radius: 4px;
+}
+.w4u-dodeca-tooltip-qr span { font-size: 10px; color: #555; }
+.w4u-dodeca-instructions {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: transparent;
+    padding: 10px 20px;
+    border-radius: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    box-shadow: none;
+    font-family: 'Manrope', sans-serif;
+}
+.w4u-dodeca-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    color: #666;
+}
+@media (max-width: 768px) {
+    .w4u-dodeca-section {
+        min-height: 400px;
+        height: 55vh;
+        max-height: 500px;
+        overflow: visible;
+        isolation: isolate;
+        position: relative;
+        z-index: 1;
+    }
+    .w4u-dodeca-canvas {
+        height: 100%;
+        touch-action: manipulation; /* Allow scroll, JS will preventDefault when touching dodeca */
+    }
+    .w4u-dodeca-instructions { font-size: 13px; padding: 8px 16px; bottom: 15px; white-space: nowrap; z-index: 50; background: transparent; color: #333; box-shadow: none; }
+    .w4u-dodeca-tooltip {
+        position: fixed !important;
+        top: 50% !important;
+        bottom: auto !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translate(-50%, -50%);
+        max-width: calc(100vw - 32px);
+        width: 340px;
+        padding: 24px;
+        z-index: 999999;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+        border-radius: 20px;
+    }
+    .w4u-dodeca-tooltip-close { display: block; background: #ffffff; color: #000; width: 36px; height: 36px; font-size: 24px; top: 12px; right: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    .w4u-dodeca-tooltip-number { width: 44px; height: 44px; font-size: 20px; margin-bottom: 14px; border-width: 2px; }
+    .w4u-dodeca-tooltip-title { font-size: 16px; margin-bottom: 10px; }
+    .w4u-dodeca-tooltip-description { font-size: 14px; margin-bottom: 14px; line-height: 1.5; }
+    .w4u-dodeca-tooltip-qr { padding: 14px; }
+    .w4u-dodeca-tooltip-qr img { width: 90px; height: 90px; }
+    .w4u-dodeca-tooltip-qr span { font-size: 10px; }
+}
+/* Mobile tooltip backdrop - transparent, just for closing */
+.w4u-dodeca-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 999998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.w4u-dodeca-backdrop.visible {
+    opacity: 1;
+    visibility: visible;
+}
+@media (max-width: 768px) {
+    .w4u-dodeca-backdrop { display: block; }
+}
+@media (max-width: 480px) {
+    .w4u-dodeca-section { min-height: 350px; height: 50vh; max-height: 450px; }
+    .w4u-dodeca-canvas { height: 100%; }
+    .w4u-dodeca-instructions { font-size: 12px; padding: 6px 12px; bottom: 10px; background: transparent; color: #333; box-shadow: none; }
+    .w4u-dodeca-tooltip {
+        width: calc(100vw - 24px);
+        max-width: 320px;
+        padding: 20px;
+    }
+    .w4u-dodeca-tooltip-close { width: 34px; height: 34px; font-size: 22px; }
+    .w4u-dodeca-tooltip-number { width: 40px; height: 40px; font-size: 18px; margin-bottom: 12px; }
+    .w4u-dodeca-tooltip-title { font-size: 15px; margin-bottom: 8px; }
+    .w4u-dodeca-tooltip-description { font-size: 13px; margin-bottom: 12px; line-height: 1.4; }
+    .w4u-dodeca-tooltip-qr { padding: 12px; }
+    .w4u-dodeca-tooltip-qr img { width: 80px; height: 80px; margin-bottom: 6px; }
+    .w4u-dodeca-tooltip-qr span { font-size: 10px; }
+}
+</style>
+
+<div class="w4u-dodeca-backdrop" id="w4u-dodeca-backdrop"></div>
+<div class="w4u-dodeca-section" id="w4u-dodeca-section">
+    <div class="w4u-dodeca-canvas" id="w4u-dodeca-canvas"></div>
+    <div class="w4u-dodeca-tooltip" id="w4u-dodeca-tooltip">
+        <button class="w4u-dodeca-tooltip-close" id="w4u-dodeca-tooltip-close">&times;</button>
+        <div class="w4u-dodeca-tooltip-number" id="w4u-dodeca-tooltip-number"></div>
+        <div class="w4u-dodeca-tooltip-title" id="w4u-dodeca-tooltip-title"></div>
+        <div class="w4u-dodeca-tooltip-description" id="w4u-dodeca-tooltip-description"></div>
+        <div class="w4u-dodeca-tooltip-qr">
+            <img id="w4u-dodeca-tooltip-qr-img" src="" alt="QR Code">
+            <span>Scan for resources</span>
+        </div>
+    </div>
+    <div class="w4u-dodeca-instructions" id="w4u-dodeca-instructions">Drag to rotate | Tap a face to explore</div>
+    <div class="w4u-dodeca-loading" id="w4u-dodeca-loading">Loading 3D viewer...</div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // Load Manrope font from CDN
+    var fontLink = document.createElement('link');
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap';
+    fontLink.rel = 'stylesheet';
+    document.head.appendChild(fontLink);
+
+    function waitForFont(fontName, callback) {
+        // Create a hidden element to force font loading
+        var testEl = document.createElement('span');
+        testEl.style.cssText = 'position:absolute;left:-9999px;font-family:"' + fontName + '";font-size:48px;font-weight:700;';
+        testEl.textContent = 'Test Font Loading';
+        document.body.appendChild(testEl);
+
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(function() {
+                document.fonts.load('700 48px "' + fontName + '"').then(function() {
+                    setTimeout(function() {
+                        document.body.removeChild(testEl);
+                        callback();
+                    }, 100);
+                }).catch(function() {
+                    document.body.removeChild(testEl);
+                    callback();
+                });
+            });
+        } else {
+            setTimeout(function() {
+                document.body.removeChild(testEl);
+                callback();
+            }, 1000);
+        }
+    }
+
+    function loadThreeJS(callback) {
+        if (typeof THREE !== 'undefined') { callback(); return; }
+        var script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        script.onload = callback;
+        script.onerror = function() {
+            var loading = document.getElementById('w4u-dodeca-loading');
+            if (loading) loading.textContent = 'Failed to load 3D library. Please refresh the page.';
+        };
+        document.head.appendChild(script);
+    }
+
+    function initDodecahedron() {
+        var loading = document.getElementById('w4u-dodeca-loading');
+        if (loading) loading.style.display = 'none';
+
+        var instructions = document.getElementById('w4u-dodeca-instructions');
+
+        var themes = [
+            { name: "Stress Management", color: "#3c9a7e", description: "Techniques and strategies to handle stress effectively", url: "https://well4ukit.co.uk/questions/1-stress-management/" },
+            { name: "Identity & Belonging", color: "#7b6ba4", description: "Exploring who you are and finding your place", url: "https://www.google.com" },
+            { name: "Building Friendships", color: "#f5a623", description: "Building and maintaining meaningful relationships", url: "https://www.google.com" },
+            { name: "Diversity", color: "#5ab89e", description: "Celebrating differences and creating inclusive spaces", url: "https://www.google.com" },
+            { name: "Bullying", color: "#5d5087", description: "Recognizing, preventing, and responding to bullying", url: "https://www.google.com" },
+            { name: "Social Media", color: "#5b8ec4", description: "Healthy habits for digital wellbeing", url: "https://www.google.com" },
+            { name: "Bounce Back", color: "#c65d4b", description: "Developing resilience to overcome challenges", url: "https://www.google.com" },
+            { name: "Safety", color: "#e88a2a", description: "Staying safe physically and emotionally", url: "https://www.google.com" },
+            { name: "Confidence", color: "#d4626a", description: "Building self-belief and positive self-image", url: "https://www.google.com" },
+            { name: "Gratitude", color: "#c9a832", description: "Practicing thankfulness for improved wellbeing", url: "https://www.google.com" },
+            { name: "Growth & Goals", color: "#2e7d65", description: "Setting and achieving personal goals", url: "https://www.google.com" },
+            { name: "Fun Questions", color: "#e07b68", description: "Lighthearted questions to spark conversation", url: "https://www.google.com" }
+        ];
+
+        var container = document.getElementById('w4u-dodeca-canvas');
+        var section = document.getElementById('w4u-dodeca-section');
+        if (!container || !section) return;
+
+        var containerWidth = container.offsetWidth;
+        var containerHeight = container.offsetHeight;
+
+        var scene = new THREE.Scene();
+        scene.background = null;
+
+        var camera = new THREE.PerspectiveCamera(50, containerWidth / containerHeight, 0.1, 1000);
+
+        function updateCameraPosition() {
+            var isMobile = window.innerWidth <= 768;
+            var isSmallMobile = window.innerWidth <= 480;
+            var isLandscape = containerWidth > containerHeight;
+            if (isSmallMobile) camera.position.z = isLandscape ? 5.5 : 6.5;
+            else if (isMobile) camera.position.z = isLandscape ? 5 : 6;
+            else camera.position.z = 5.4;
+        }
+        updateCameraPosition();
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(containerWidth, containerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        var ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+        scene.add(ambientLight);
+
+        var directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(5, 5, 5);
+        scene.add(directionalLight);
+
+        var directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.3);
+        directionalLight2.position.set(-5, -5, -5);
+        scene.add(directionalLight2);
+
+        function createFaceTexture(number, title, bgColor) {
+            var canvas = document.createElement('canvas');
+            var size = 1024;
+            canvas.width = size;
+            canvas.height = size;
+            var ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+
+            var gradient = ctx.createRadialGradient(size * 0.3, size * 0.3, 0, size/2, size/2, size * 0.7);
+            gradient.addColorStop(0, 'rgba(255,255,255,0.12)');
+            gradient.addColorStop(0.5, 'rgba(255,255,255,0.05)');
+            gradient.addColorStop(1, 'rgba(0,0,0,0.15)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            for (var i = 0; i < 3000; i++) {
+                var x = Math.random() * size;
+                var y = Math.random() * size;
+                var alpha = Math.random() * 0.03;
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(255,255,255,' + alpha + ')' : 'rgba(0,0,0,' + alpha + ')';
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+            ctx.font = 'bold 180px "Manrope", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(number.toString(), size/2, size/2 - 60);
+
+            ctx.font = 'bold 52px "Manrope", sans-serif';
+            var words = title.split(' ');
+            var lines = [];
+            var currentLine = '';
+            for (var j = 0; j < words.length; j++) {
+                var word = words[j];
+                var testLine = currentLine + (currentLine ? ' ' : '') + word;
+                if (ctx.measureText(testLine).width > size * 0.55 && currentLine) {
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            lines.push(currentLine);
+
+            var lineHeight = 60;
+            var startY = size/2 + 80;
+            for (var k = 0; k < lines.length; k++) {
+                ctx.fillText(lines[k], size/2, startY + k * lineHeight);
+            }
+
+            var texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.anisotropy = 16;
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        function createDodecahedron() {
+            var radius = 1.5;
+            var roundRadius = 0.15;
+            var detail = 4;
+
+            // Face normals of dodecahedron = normalized icosahedron vertices
+            var phi = (1 + Math.sqrt(5)) / 2;
+            var rawN = [
+                [0, 1, phi], [0, -1, phi], [0, 1, -phi], [0, -1, -phi],
+                [1, phi, 0], [-1, phi, 0], [1, -phi, 0], [-1, -phi, 0],
+                [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1]
+            ];
+            var dodecaNormals = [];
+            for (var i = 0; i < 12; i++) {
+                dodecaNormals.push(new THREE.Vector3(rawN[i][0], rawN[i][1], rawN[i][2]).normalize());
+            }
+
+            // Compute inradius from base dodecahedron vertex
+            var baseGeo = new THREE.DodecahedronGeometry(radius, 0);
+            var bPos = baseGeo.attributes.position;
+            var sampleV = new THREE.Vector3(bPos.getX(0), bPos.getY(0), bPos.getZ(0));
+            var inradius = 0;
+            for (var i = 0; i < 12; i++) {
+                inradius = Math.max(inradius, sampleV.dot(dodecaNormals[i]));
+            }
+            var shrunkDist = inradius - roundRadius;
+
+            // Create high-detail dodecahedron and round each vertex
+            var geo = new THREE.DodecahedronGeometry(radius, detail);
+            var pos = geo.attributes.position;
+            var vertNormals = [];
+
+            for (var vi = 0; vi < pos.count; vi++) {
+                var vertex = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi));
+
+                // Iterative projection onto shrunk dodecahedron
+                var closest = vertex.clone();
+                for (var iter = 0; iter < 40; iter++) {
+                    var maxViol = -Infinity;
+                    var worst = -1;
+                    for (var fi = 0; fi < 12; fi++) {
+                        var viol = closest.dot(dodecaNormals[fi]) - shrunkDist;
+                        if (viol > maxViol) { maxViol = viol; worst = fi; }
+                    }
+                    if (maxViol <= 1e-8) break;
+                    closest.addScaledVector(dodecaNormals[worst], -maxViol);
+                }
+
+                var dir = new THREE.Vector3().subVectors(vertex, closest);
+                var len = dir.length();
+                if (len > 1e-10) {
+                    dir.divideScalar(len);
+                } else {
+                    dir.copy(vertex).normalize();
+                }
+
+                pos.setXYZ(vi,
+                    closest.x + dir.x * roundRadius,
+                    closest.y + dir.y * roundRadius,
+                    closest.z + dir.z * roundRadius
+                );
+                vertNormals.push(dir.clone());
+            }
+            pos.needsUpdate = true;
+
+            // Set custom normals for smooth shading on rounded edges
+            var norAttr = geo.attributes.normal;
+            for (var vi = 0; vi < pos.count; vi++) {
+                norAttr.setXYZ(vi, vertNormals[vi].x, vertNormals[vi].y, vertNormals[vi].z);
+            }
+            norAttr.needsUpdate = true;
+
+            // Convert to non-indexed for per-face materials
+            var niGeo = geo.toNonIndexed();
+            var niPos = niGeo.attributes.position;
+            var niNor = niGeo.attributes.normal;
+            var triCount = niPos.count / 3;
+
+            // Assign each triangle to one of 12 faces
+            var triToFace = new Array(triCount);
+            for (var ti = 0; ti < triCount; ti++) {
+                var cx = 0, cy = 0, cz = 0;
+                for (var j = 0; j < 3; j++) {
+                    var idx = ti * 3 + j;
+                    cx += niPos.getX(idx); cy += niPos.getY(idx); cz += niPos.getZ(idx);
+                }
+                var centroid = new THREE.Vector3(cx / 3, cy / 3, cz / 3).normalize();
+                var bestFace = 0, bestDot = -Infinity;
+                for (var fi = 0; fi < 12; fi++) {
+                    var d = centroid.dot(dodecaNormals[fi]);
+                    if (d > bestDot) { bestDot = d; bestFace = fi; }
+                }
+                triToFace[ti] = bestFace;
+            }
+
+            // Sort triangles by face for material grouping
+            var sortedIndices = [];
+            for (var ti = 0; ti < triCount; ti++) sortedIndices.push(ti);
+            sortedIndices.sort(function(a, b) { return triToFace[a] - triToFace[b]; });
+
+            var newPosArr = new Float32Array(niPos.count * 3);
+            var newNorArr = new Float32Array(niNor.count * 3);
+            var sortedTriToFace = new Array(triCount);
+
+            for (var si = 0; si < triCount; si++) {
+                var origTri = sortedIndices[si];
+                sortedTriToFace[si] = triToFace[origTri];
+                for (var j = 0; j < 3; j++) {
+                    var srcIdx = origTri * 3 + j;
+                    var dstIdx = si * 3 + j;
+                    newPosArr[dstIdx * 3]     = niPos.getX(srcIdx);
+                    newPosArr[dstIdx * 3 + 1] = niPos.getY(srcIdx);
+                    newPosArr[dstIdx * 3 + 2] = niPos.getZ(srcIdx);
+                    newNorArr[dstIdx * 3]     = niNor.getX(srcIdx);
+                    newNorArr[dstIdx * 3 + 1] = niNor.getY(srcIdx);
+                    newNorArr[dstIdx * 3 + 2] = niNor.getZ(srcIdx);
+                }
+            }
+
+            niGeo.setAttribute('position', new THREE.BufferAttribute(newPosArr, 3));
+            niGeo.setAttribute('normal', new THREE.BufferAttribute(newNorArr, 3));
+
+            // Create material groups
+            niGeo.clearGroups();
+            var currentFace = sortedTriToFace[0];
+            var groupStart = 0;
+            for (var si = 1; si <= triCount; si++) {
+                if (si === triCount || sortedTriToFace[si] !== currentFace) {
+                    niGeo.addGroup(groupStart * 3, (si - groupStart) * 3, currentFace);
+                    if (si < triCount) {
+                        currentFace = sortedTriToFace[si];
+                        groupStart = si;
+                    }
+                }
+            }
+
+            // Compute UVs per face
+            var faceTangents = [];
+            var faceBitangents = [];
+            var faceCenters = [];
+            for (var fi = 0; fi < 12; fi++) {
+                var normal = dodecaNormals[fi];
+                var center = normal.clone().multiplyScalar(inradius);
+                faceCenters.push(center.clone());
+                var up = new THREE.Vector3(0, 1, 0);
+                if (Math.abs(normal.dot(up)) > 0.9) up.set(1, 0, 0);
+                var tangent = new THREE.Vector3().crossVectors(up, normal).normalize();
+                var bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+                faceTangents.push(tangent);
+                faceBitangents.push(bitangent);
+            }
+
+            var niPosAttr = niGeo.attributes.position;
+            var uvs = new Float32Array(niPosAttr.count * 2);
+            for (var vi = 0; vi < niPosAttr.count; vi++) {
+                var triIdx = Math.floor(vi / 3);
+                var faceIdx = sortedTriToFace[triIdx];
+                var vertex = new THREE.Vector3(niPosAttr.getX(vi), niPosAttr.getY(vi), niPosAttr.getZ(vi));
+                var localPos = vertex.clone().sub(faceCenters[faceIdx]);
+                uvs[vi * 2] = 0.5 + localPos.dot(faceTangents[faceIdx]) * 0.4;
+                uvs[vi * 2 + 1] = 0.5 + localPos.dot(faceBitangents[faceIdx]) * 0.4;
+            }
+            niGeo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+
+            // Build materials
+            var materials = themes.map(function(theme, idx) {
+                var texture = createFaceTexture(idx + 1, theme.name, theme.color);
+                return new THREE.MeshLambertMaterial({ map: texture, side: THREE.FrontSide });
+            });
+
+            var mesh = new THREE.Mesh(niGeo, materials);
+            mesh.userData.faceCenters = faceCenters;
+            mesh.userData.faceNormals = dodecaNormals;
+            mesh.userData.triToFace = sortedTriToFace;
+            return mesh;
+        }
+
+        var dodecahedron = createDodecahedron();
+        scene.add(dodecahedron);
+
+        var isDragging = false;
+        var previousMousePosition = { x: 0, y: 0 };
+        var autoRotate = true;
+        var rotationVelocity = { x: 0, y: 0 };
+        var lastInteractionTime = Date.now();
+        var autoRotateDelay = 3000;
+
+        var targetQuaternion = new THREE.Quaternion();
+        var isAnimatingToFace = false;
+        var animationSpeed = 0.08;
+
+        function getFaceUp(faceIndex) {
+            var normal = dodecahedron.userData.faceNormals[faceIndex];
+            var up = new THREE.Vector3(0, 1, 0);
+            if (Math.abs(normal.dot(up)) > 0.9) up.set(1, 0, 0);
+            var tangent = new THREE.Vector3().crossVectors(up, normal).normalize();
+            var bitangent = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+            return bitangent;
+        }
+
+        function rotateFaceToCamera(faceIndex) {
+            var localNormal = dodecahedron.userData.faceNormals[faceIndex].clone();
+            var localUp = getFaceUp(faceIndex);
+            var cameraDir = new THREE.Vector3(0, 0, 1);
+            var worldUp = new THREE.Vector3(0, 1, 0);
+
+            var testQuat = new THREE.Quaternion();
+            var bestQuat = new THREE.Quaternion();
+            var worldNormal = new THREE.Vector3();
+            var worldFaceUp = new THREE.Vector3();
+            var bestScore = -Infinity;
+
+            var steps = 72;
+            for (var i = 0; i < steps; i++) {
+                var yAngle = (i / steps) * Math.PI * 2;
+                for (var j = 0; j < steps; j++) {
+                    var xAngle = (j / steps) * Math.PI * 2 - Math.PI;
+                    for (var k = 0; k < steps / 2; k++) {
+                        var zAngle = (k / (steps / 2)) * Math.PI - Math.PI / 2;
+                        testQuat.setFromEuler(new THREE.Euler(xAngle, yAngle, zAngle, 'YXZ'));
+                        worldNormal.copy(localNormal).applyQuaternion(testQuat);
+                        worldFaceUp.copy(localUp).applyQuaternion(testQuat);
+
+                        var normalScore = -worldNormal.angleTo(cameraDir);
+                        var upScore = worldFaceUp.dot(worldUp) * 0.5;
+                        var score = normalScore + upScore;
+
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestQuat.copy(testQuat);
+                        }
+                    }
+                }
+            }
+
+            var baseEuler = new THREE.Euler().setFromQuaternion(bestQuat, 'YXZ');
+            var refineRange = 0.15;
+            for (var r = 0; r < 3; r++) {
+                var bestX = baseEuler.x, bestY = baseEuler.y, bestZ = baseEuler.z;
+                bestScore = -Infinity;
+                for (var i = -10; i <= 10; i++) {
+                    for (var j = -10; j <= 10; j++) {
+                        for (var k = -10; k <= 10; k++) {
+                            var xAngle = baseEuler.x + (i / 10) * refineRange;
+                            var yAngle = baseEuler.y + (j / 10) * refineRange;
+                            var zAngle = baseEuler.z + (k / 10) * refineRange;
+                            testQuat.setFromEuler(new THREE.Euler(xAngle, yAngle, zAngle, 'YXZ'));
+                            worldNormal.copy(localNormal).applyQuaternion(testQuat);
+                            worldFaceUp.copy(localUp).applyQuaternion(testQuat);
+
+                            var normalScore = -worldNormal.angleTo(cameraDir) * 10;
+                            var upScore = worldFaceUp.dot(worldUp);
+                            var score = normalScore + upScore;
+
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestX = xAngle; bestY = yAngle; bestZ = zAngle;
+                            }
+                        }
+                    }
+                }
+                baseEuler.x = bestX; baseEuler.y = bestY; baseEuler.z = bestZ;
+                refineRange *= 0.3;
+            }
+
+            targetQuaternion.setFromEuler(baseEuler);
+            isAnimatingToFace = true;
+            autoRotate = false;
+        }
+
+        function onPointerDown(event) {
+            isDragging = true;
+            autoRotate = false;
+            isAnimatingToFace = false;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        }
+
+        function onPointerMove(event) {
+            if (!isDragging) return;
+            isAnimatingToFace = false;
+            var deltaX = event.clientX - previousMousePosition.x;
+            var deltaY = event.clientY - previousMousePosition.y;
+            rotationVelocity.x = deltaY * 0.005;
+            rotationVelocity.y = deltaX * 0.005;
+            dodecahedron.rotation.x += rotationVelocity.x;
+            dodecahedron.rotation.y += rotationVelocity.y;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+            lastInteractionTime = Date.now();
+        }
+
+        function onPointerUp() { isDragging = false; lastInteractionTime = Date.now(); }
+
+        function isMobileDevice() {
+            return window.innerWidth <= 768;
+        }
+
+        // For mobile: check if touch hits the dodecahedron
+        var touchRaycaster = new THREE.Raycaster();
+        var touchMouse = new THREE.Vector2();
+        var isTouchingDodeca = false;
+
+        function checkTouchHitsDodeca(clientX, clientY) {
+            var rect = renderer.domElement.getBoundingClientRect();
+            touchMouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            touchMouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            touchRaycaster.setFromCamera(touchMouse, camera);
+            var intersects = touchRaycaster.intersectObject(dodecahedron);
+            return intersects.length > 0;
+        }
+
+        function onTouchStart(event) {
+            if (event.touches.length === 1) {
+                var touchX = event.touches[0].clientX;
+                var touchY = event.touches[0].clientY;
+                previousMousePosition = { x: touchX, y: touchY };
+
+                // Check if touching the dodecahedron
+                isTouchingDodeca = checkTouchHitsDodeca(touchX, touchY);
+
+                if (isTouchingDodeca) {
+                    // Only prevent scroll if touching the 3D object
+                    event.preventDefault();
+                    isDragging = true;
+                    autoRotate = false;
+                    isAnimatingToFace = false;
+                }
+                // If not touching dodeca, let the event pass through for scrolling
+            }
+        }
+
+        function onTouchMove(event) {
+            if (event.touches.length !== 1) return;
+
+            // Only intercept if we started on the dodecahedron
+            if (!isTouchingDodeca || !isDragging) return;
+
+            event.preventDefault();
+            isAnimatingToFace = false;
+            var deltaX = event.touches[0].clientX - previousMousePosition.x;
+            var deltaY = event.touches[0].clientY - previousMousePosition.y;
+            rotationVelocity.x = deltaY * 0.005;
+            rotationVelocity.y = deltaX * 0.005;
+            dodecahedron.rotation.x += rotationVelocity.x;
+            dodecahedron.rotation.y += rotationVelocity.y;
+            previousMousePosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+            lastInteractionTime = Date.now();
+        }
+
+        function onTouchEnd() {
+            isDragging = false;
+            isTouchingDodeca = false;
+            lastInteractionTime = Date.now();
+        }
+
+        renderer.domElement.addEventListener('mousedown', onPointerDown);
+        renderer.domElement.addEventListener('mousemove', onPointerMove);
+        renderer.domElement.addEventListener('mouseup', onPointerUp);
+        renderer.domElement.addEventListener('mouseleave', onPointerUp);
+        // Use passive: false so we can conditionally preventDefault
+        renderer.domElement.addEventListener('touchstart', onTouchStart, { passive: false });
+        renderer.domElement.addEventListener('touchmove', onTouchMove, { passive: false });
+        renderer.domElement.addEventListener('touchend', onTouchEnd);
+
+        var raycaster = new THREE.Raycaster();
+        var mouse = new THREE.Vector2();
+        var clickStartPosition = { x: 0, y: 0 };
+        var clickStartTime = 0;
+
+        renderer.domElement.addEventListener('mousedown', function(event) {
+            clickStartPosition = { x: event.clientX, y: event.clientY };
+            clickStartTime = Date.now();
+        });
+
+        renderer.domElement.addEventListener('mouseup', function(event) {
+            var dx = event.clientX - clickStartPosition.x;
+            var dy = event.clientY - clickStartPosition.y;
+            if (Math.sqrt(dx * dx + dy * dy) < 10 && Date.now() - clickStartTime < 300) {
+                handleClick(event.clientX, event.clientY);
+            }
+        });
+
+        renderer.domElement.addEventListener('touchstart', function(event) {
+            if (event.touches.length === 1) {
+                clickStartPosition = { x: event.touches[0].clientX, y: event.touches[0].clientY };
+                clickStartTime = Date.now();
+            }
+        });
+
+        renderer.domElement.addEventListener('touchend', function(event) {
+            if (event.changedTouches.length === 1) {
+                var touch = event.changedTouches[0];
+                var dx = touch.clientX - clickStartPosition.x;
+                var dy = touch.clientY - clickStartPosition.y;
+                if (Math.sqrt(dx * dx + dy * dy) < 20 && Date.now() - clickStartTime < 300) {
+                    handleClick(touch.clientX, touch.clientY);
+                }
+            }
+        });
+
+        function handleClick(clientX, clientY) {
+            var rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObject(dodecahedron);
+            if (intersects.length > 0) {
+                var faceIndex = dodecahedron.userData.triToFace[intersects[0].faceIndex];
+                rotateFaceToCamera(faceIndex);
+                showTooltip(faceIndex, clientX, clientY);
+            } else {
+                hideTooltip();
+            }
+        }
+
+        var tooltip = document.getElementById('w4u-dodeca-tooltip');
+        var tooltipNumber = document.getElementById('w4u-dodeca-tooltip-number');
+        var tooltipTitle = document.getElementById('w4u-dodeca-tooltip-title');
+        var tooltipDescription = document.getElementById('w4u-dodeca-tooltip-description');
+        var tooltipQrImg = document.getElementById('w4u-dodeca-tooltip-qr-img');
+        var backdrop = document.getElementById('w4u-dodeca-backdrop');
+
+        function hexToRgb(hex) {
+            var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 100, g: 100, b: 100 };
+        }
+
+        function createDynamicGradient(hexColor) {
+            var rgb = hexToRgb(hexColor);
+            var light1 = 'rgba(' + Math.min(255, rgb.r + 140) + ',' + Math.min(255, rgb.g + 140) + ',' + Math.min(255, rgb.b + 140) + ', 0.95)';
+            var light2 = 'rgba(' + Math.min(255, rgb.r + 100) + ',' + Math.min(255, rgb.g + 100) + ',' + Math.min(255, rgb.b + 100) + ', 0.9)';
+            var light3 = 'rgba(' + Math.min(255, rgb.r + 60) + ',' + Math.min(255, rgb.g + 60) + ',' + Math.min(255, rgb.b + 60) + ', 0.85)';
+            return 'linear-gradient(145deg, ' + light1 + ' 0%, ' + light2 + ' 50%, ' + light3 + ' 100%)';
+        }
+
+        function showTooltip(faceIndex, x, y) {
+            var theme = themes[faceIndex];
+            tooltipNumber.textContent = faceIndex + 1;
+            tooltipTitle.textContent = theme.name;
+            tooltipDescription.textContent = theme.description;
+            tooltipQrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=' + encodeURIComponent(theme.url);
+            tooltip.style.background = createDynamicGradient(theme.color);
+
+            var isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                tooltip.style.left = '';
+                tooltip.style.right = '';
+                tooltip.style.top = '';
+                tooltip.style.bottom = '';
+            } else {
+                var tooltipWidth = 240, tooltipHeight = 320, padding = 40;
+                var sectionRect = section.getBoundingClientRect();
+                var sectionCenterX = sectionRect.left + sectionRect.width / 2;
+                var posY = (sectionRect.height - tooltipHeight) / 2;
+                var posX = x >= sectionCenterX
+                    ? sectionRect.width / 2 + 280
+                    : sectionRect.width / 2 - 280 - tooltipWidth;
+                if (posX + tooltipWidth > sectionRect.width - padding) posX = sectionRect.width - tooltipWidth - padding;
+                if (posX < padding) posX = padding;
+                tooltip.style.left = posX + 'px';
+                tooltip.style.top = posY + 'px';
+            }
+            tooltip.classList.add('visible');
+            if (isMobileDevice()) {
+                if (backdrop) backdrop.classList.add('visible');
+                // Disable page scroll on mobile when tooltip is open
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('visible');
+            if (backdrop) backdrop.classList.remove('visible');
+            // Re-enable page scroll
+            if (isMobileDevice()) {
+                document.body.style.overflow = '';
+            }
+        }
+
+        var closeBtn = document.getElementById('w4u-dodeca-tooltip-close');
+        closeBtn.addEventListener('click', function(e) { e.stopPropagation(); hideTooltip(); });
+        closeBtn.addEventListener('touchend', function(e) { e.preventDefault(); e.stopPropagation(); hideTooltip(); });
+
+        // Close tooltip when backdrop is clicked/tapped
+        if (backdrop) {
+            backdrop.addEventListener('click', hideTooltip);
+            backdrop.addEventListener('touchend', function(e) { e.preventDefault(); hideTooltip(); });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!renderer.domElement.contains(event.target) && !tooltip.contains(event.target)) hideTooltip();
+        });
+
+        function onResize() {
+            containerWidth = container.offsetWidth;
+            containerHeight = container.offsetHeight;
+            camera.aspect = containerWidth / containerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(containerWidth, containerHeight);
+            updateCameraPosition();
+        }
+
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', function() { setTimeout(onResize, 100); });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (isAnimatingToFace) {
+                dodecahedron.quaternion.slerp(targetQuaternion, animationSpeed);
+                if (dodecahedron.quaternion.angleTo(targetQuaternion) < 0.01) {
+                    dodecahedron.quaternion.copy(targetQuaternion);
+                    isAnimatingToFace = false;
+                    lastInteractionTime = Date.now();
+                }
+            } else if (!isDragging && Date.now() - lastInteractionTime > autoRotateDelay) {
+                autoRotate = true;
+            }
+
+            if (autoRotate && !isAnimatingToFace) {
+                dodecahedron.rotation.y += 0.001;
+                dodecahedron.rotation.x += 0.0003;
+            } else if (!isDragging && !isAnimatingToFace) {
+                rotationVelocity.x *= 0.95;
+                rotationVelocity.y *= 0.95;
+                dodecahedron.rotation.x += rotationVelocity.x;
+                dodecahedron.rotation.y += rotationVelocity.y;
+            }
+
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            waitForFont('Manrope', function() {
+                loadThreeJS(initDodecahedron);
+            });
+        });
+    } else {
+        waitForFont('Manrope', function() {
+            loadThreeJS(initDodecahedron);
+        });
+    }
+})();
+</script>
