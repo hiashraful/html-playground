@@ -376,137 +376,174 @@
         function createDodecahedron() {
             var radius = 1.5;
             var roundRadius = 0.15;
-            var detail = 4;
+            var detail = 10;
 
-            // Face normals of dodecahedron = normalized icosahedron vertices
-            var phi = (1 + Math.sqrt(5)) / 2;
-            var rawN = [
-                [0, 1, phi], [0, -1, phi], [0, 1, -phi], [0, -1, -phi],
-                [1, phi, 0], [-1, phi, 0], [1, -phi, 0], [-1, -phi, 0],
-                [phi, 0, 1], [-phi, 0, 1], [phi, 0, -1], [-phi, 0, -1]
-            ];
-            var dodecaNormals = [];
-            for (var i = 0; i < 12; i++) {
-                dodecaNormals.push(new THREE.Vector3(rawN[i][0], rawN[i][1], rawN[i][2]).normalize());
-            }
-
-            // Compute inradius from base dodecahedron vertex
+            // Compute face normals from actual base DodecahedronGeometry
+            // (detail=0 gives 12 faces * 3 triangles * 3 vertices = 108 vertices)
             var baseGeo = new THREE.DodecahedronGeometry(radius, 0);
             var bPos = baseGeo.attributes.position;
-            var sampleV = new THREE.Vector3(bPos.getX(0), bPos.getY(0), bPos.getZ(0));
-            var inradius = 0;
+            var verticesPerBaseFace = 9; // 3 triangles * 3 vertices per pentagon face
+            var dodecaNormals = [];
             for (var i = 0; i < 12; i++) {
-                inradius = Math.max(inradius, sampleV.dot(dodecaNormals[i]));
+                var cx = 0, cy = 0, cz = 0;
+                var startIdx = i * verticesPerBaseFace;
+                for (var j = 0; j < verticesPerBaseFace; j++) {
+                    cx += bPos.getX(startIdx + j);
+                    cy += bPos.getY(startIdx + j);
+                    cz += bPos.getZ(startIdx + j);
+                }
+                dodecaNormals.push(new THREE.Vector3(cx, cy, cz).normalize());
             }
-            var shrunkDist = inradius - roundRadius;
 
-            // Create high-detail dodecahedron and round each vertex
+            // Compute inradius: distance from origin to face plane
+            var sampleV = new THREE.Vector3(bPos.getX(0), bPos.getY(0), bPos.getZ(0));
+            var inradius = sampleV.dot(dodecaNormals[0]);
+            var D = inradius - roundRadius;
+
+            // Precompute 30 edges (pairs of adjacent faces)
+            var ADJ_DOT = 1 / Math.sqrt(5);
+            var dodecaEdges = [];
+            for (var i = 0; i < 12; i++) {
+                for (var j = i + 1; j < 12; j++) {
+                    if (Math.abs(dodecaNormals[i].dot(dodecaNormals[j]) - ADJ_DOT) < 0.05) {
+                        dodecaEdges.push([i, j]);
+                    }
+                }
+            }
+
+            // Precompute 20 vertices (triples of mutually adjacent faces)
+            var dodecaVerts = [];
+            for (var i = 0; i < 12; i++) {
+                for (var j = i + 1; j < 12; j++) {
+                    if (Math.abs(dodecaNormals[i].dot(dodecaNormals[j]) - ADJ_DOT) >= 0.05) continue;
+                    for (var k = j + 1; k < 12; k++) {
+                        if (Math.abs(dodecaNormals[i].dot(dodecaNormals[k]) - ADJ_DOT) >= 0.05) continue;
+                        if (Math.abs(dodecaNormals[j].dot(dodecaNormals[k]) - ADJ_DOT) >= 0.05) continue;
+                        dodecaVerts.push([i, j, k]);
+                    }
+                }
+            }
+
+            // Edge line data (point on line + direction)
+            var edgeData = dodecaEdges.map(function(e) {
+                var n1 = dodecaNormals[e[0]], n2 = dodecaNormals[e[1]];
+                var dir = new THREE.Vector3().crossVectors(n1, n2).normalize();
+                var c = n1.dot(n2);
+                var alpha = D / (1 + c);
+                var pt = n1.clone().multiplyScalar(alpha).addScaledVector(n2, alpha);
+                return { dir: dir, point: pt };
+            });
+
+            // Vertex positions on shrunk dodecahedron (3-plane intersections)
+            var vertexPoints = dodecaVerts.map(function(v) {
+                var n1 = dodecaNormals[v[0]], n2 = dodecaNormals[v[1]], n3 = dodecaNormals[v[2]];
+                var mat = new THREE.Matrix3();
+                mat.set(n1.x, n1.y, n1.z, n2.x, n2.y, n2.z, n3.x, n3.y, n3.z);
+                var inv = new THREE.Matrix3().copy(mat).invert();
+                return new THREE.Vector3(D, D, D).applyMatrix3(inv);
+            });
+
+            // Create high-detail dodecahedron (already non-indexed in Three.js PolyhedronGeometry)
             var geo = new THREE.DodecahedronGeometry(radius, detail);
             var pos = geo.attributes.position;
-            var vertNormals = [];
+            var norAttr = geo.attributes.normal;
+            var totalTris = pos.count / 3;
 
+            // Deterministic face mapping: PolyhedronGeometry outputs sub-triangles
+            // in order of the 36 base triangles (3 per dodecahedron face).
+            // Each base triangle produces (detail+1)^2 sub-triangles.
+            var trisPerBaseTri = (detail + 1) * (detail + 1);
+            var trisPerFace = 3 * trisPerBaseTri;
+            var vertsPerFace = trisPerFace * 3;
+
+            // Map each of the 12 base faces to its dodecaNormal index
+            var baseFaceToNormal = [];
+            for (var bf = 0; bf < 12; bf++) {
+                var cx = 0, cy = 0, cz = 0;
+                var startVert = bf * vertsPerFace;
+                for (var v = 0; v < vertsPerFace; v++) {
+                    cx += pos.getX(startVert + v);
+                    cy += pos.getY(startVert + v);
+                    cz += pos.getZ(startVert + v);
+                }
+                var centroid = new THREE.Vector3(cx / vertsPerFace, cy / vertsPerFace, cz / vertsPerFace).normalize();
+                var bestNormal = 0, bestDot = -Infinity;
+                for (var ni = 0; ni < 12; ni++) {
+                    var d = centroid.dot(dodecaNormals[ni]);
+                    if (d > bestDot) { bestDot = d; bestNormal = ni; }
+                }
+                baseFaceToNormal[bf] = bestNormal;
+            }
+
+            // Build per-triangle face lookup
+            var triToFace = new Array(totalTris);
+            for (var ti = 0; ti < totalTris; ti++) {
+                var bf = Math.floor(ti / trisPerFace);
+                triToFace[ti] = baseFaceToNormal[bf];
+            }
+
+            // Round each vertex: find closest point on shrunk dodecahedron analytically
             for (var vi = 0; vi < pos.count; vi++) {
-                var vertex = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi));
+                var V = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi));
+                var closest = null;
+                var minDistSq = Infinity;
 
-                // Iterative projection onto shrunk dodecahedron
-                var closest = vertex.clone();
-                for (var iter = 0; iter < 40; iter++) {
-                    var maxViol = -Infinity;
-                    var worst = -1;
-                    for (var fi = 0; fi < 12; fi++) {
-                        var viol = closest.dot(dodecaNormals[fi]) - shrunkDist;
-                        if (viol > maxViol) { maxViol = viol; worst = fi; }
+                // Check each face: project V onto plane, verify projection is inside face
+                for (var fi = 0; fi < 12; fi++) {
+                    var n = dodecaNormals[fi];
+                    var proj = V.clone().addScaledVector(n, D - V.dot(n));
+                    var valid = true;
+                    for (var fj = 0; fj < 12; fj++) {
+                        if (fj === fi) continue;
+                        if (proj.dot(dodecaNormals[fj]) > D + 1e-6) { valid = false; break; }
                     }
-                    if (maxViol <= 1e-8) break;
-                    closest.addScaledVector(dodecaNormals[worst], -maxViol);
+                    if (valid) {
+                        var dSq = V.distanceToSquared(proj);
+                        if (dSq < minDistSq) { minDistSq = dSq; closest = proj; }
+                    }
                 }
 
-                var dir = new THREE.Vector3().subVectors(vertex, closest);
-                var len = dir.length();
-                if (len > 1e-10) {
-                    dir.divideScalar(len);
-                } else {
-                    dir.copy(vertex).normalize();
+                // Check each edge: project V onto edge line, verify within bounds
+                for (var ei = 0; ei < edgeData.length; ei++) {
+                    var ed = edgeData[ei];
+                    var t = new THREE.Vector3().subVectors(V, ed.point).dot(ed.dir);
+                    var proj = ed.point.clone().addScaledVector(ed.dir, t);
+                    var valid = true;
+                    for (var fj = 0; fj < 12; fj++) {
+                        if (proj.dot(dodecaNormals[fj]) > D + 1e-6) { valid = false; break; }
+                    }
+                    if (valid) {
+                        var dSq = V.distanceToSquared(proj);
+                        if (dSq < minDistSq) { minDistSq = dSq; closest = proj; }
+                    }
                 }
+
+                // Check each vertex of shrunk dodecahedron (always valid)
+                for (var vti = 0; vti < vertexPoints.length; vti++) {
+                    var dSq = V.distanceToSquared(vertexPoints[vti]);
+                    if (dSq < minDistSq) { minDistSq = dSq; closest = vertexPoints[vti].clone(); }
+                }
+
+                // Rounded position = closest + roundRadius * direction
+                var dir = new THREE.Vector3().subVectors(V, closest);
+                var len = dir.length();
+                if (len > 1e-10) dir.divideScalar(len);
+                else dir.copy(V).normalize();
 
                 pos.setXYZ(vi,
                     closest.x + dir.x * roundRadius,
                     closest.y + dir.y * roundRadius,
                     closest.z + dir.z * roundRadius
                 );
-                vertNormals.push(dir.clone());
+                norAttr.setXYZ(vi, dir.x, dir.y, dir.z);
             }
             pos.needsUpdate = true;
-
-            // Set custom normals for smooth shading on rounded edges
-            var norAttr = geo.attributes.normal;
-            for (var vi = 0; vi < pos.count; vi++) {
-                norAttr.setXYZ(vi, vertNormals[vi].x, vertNormals[vi].y, vertNormals[vi].z);
-            }
             norAttr.needsUpdate = true;
 
-            // Convert to non-indexed for per-face materials
-            var niGeo = geo.toNonIndexed();
-            var niPos = niGeo.attributes.position;
-            var niNor = niGeo.attributes.normal;
-            var triCount = niPos.count / 3;
-
-            // Assign each triangle to one of 12 faces
-            var triToFace = new Array(triCount);
-            for (var ti = 0; ti < triCount; ti++) {
-                var cx = 0, cy = 0, cz = 0;
-                for (var j = 0; j < 3; j++) {
-                    var idx = ti * 3 + j;
-                    cx += niPos.getX(idx); cy += niPos.getY(idx); cz += niPos.getZ(idx);
-                }
-                var centroid = new THREE.Vector3(cx / 3, cy / 3, cz / 3).normalize();
-                var bestFace = 0, bestDot = -Infinity;
-                for (var fi = 0; fi < 12; fi++) {
-                    var d = centroid.dot(dodecaNormals[fi]);
-                    if (d > bestDot) { bestDot = d; bestFace = fi; }
-                }
-                triToFace[ti] = bestFace;
-            }
-
-            // Sort triangles by face for material grouping
-            var sortedIndices = [];
-            for (var ti = 0; ti < triCount; ti++) sortedIndices.push(ti);
-            sortedIndices.sort(function(a, b) { return triToFace[a] - triToFace[b]; });
-
-            var newPosArr = new Float32Array(niPos.count * 3);
-            var newNorArr = new Float32Array(niNor.count * 3);
-            var sortedTriToFace = new Array(triCount);
-
-            for (var si = 0; si < triCount; si++) {
-                var origTri = sortedIndices[si];
-                sortedTriToFace[si] = triToFace[origTri];
-                for (var j = 0; j < 3; j++) {
-                    var srcIdx = origTri * 3 + j;
-                    var dstIdx = si * 3 + j;
-                    newPosArr[dstIdx * 3]     = niPos.getX(srcIdx);
-                    newPosArr[dstIdx * 3 + 1] = niPos.getY(srcIdx);
-                    newPosArr[dstIdx * 3 + 2] = niPos.getZ(srcIdx);
-                    newNorArr[dstIdx * 3]     = niNor.getX(srcIdx);
-                    newNorArr[dstIdx * 3 + 1] = niNor.getY(srcIdx);
-                    newNorArr[dstIdx * 3 + 2] = niNor.getZ(srcIdx);
-                }
-            }
-
-            niGeo.setAttribute('position', new THREE.BufferAttribute(newPosArr, 3));
-            niGeo.setAttribute('normal', new THREE.BufferAttribute(newNorArr, 3));
-
-            // Create material groups
-            niGeo.clearGroups();
-            var currentFace = sortedTriToFace[0];
-            var groupStart = 0;
-            for (var si = 1; si <= triCount; si++) {
-                if (si === triCount || sortedTriToFace[si] !== currentFace) {
-                    niGeo.addGroup(groupStart * 3, (si - groupStart) * 3, currentFace);
-                    if (si < triCount) {
-                        currentFace = sortedTriToFace[si];
-                        groupStart = si;
-                    }
-                }
+            // Add material groups using deterministic face mapping (no sorting needed)
+            geo.clearGroups();
+            for (var bf = 0; bf < 12; bf++) {
+                geo.addGroup(bf * vertsPerFace, vertsPerFace, baseFaceToNormal[bf]);
             }
 
             // Compute UVs per face
@@ -525,17 +562,16 @@
                 faceBitangents.push(bitangent);
             }
 
-            var niPosAttr = niGeo.attributes.position;
-            var uvs = new Float32Array(niPosAttr.count * 2);
-            for (var vi = 0; vi < niPosAttr.count; vi++) {
+            var uvs = new Float32Array(pos.count * 2);
+            for (var vi = 0; vi < pos.count; vi++) {
                 var triIdx = Math.floor(vi / 3);
-                var faceIdx = sortedTriToFace[triIdx];
-                var vertex = new THREE.Vector3(niPosAttr.getX(vi), niPosAttr.getY(vi), niPosAttr.getZ(vi));
+                var faceIdx = triToFace[triIdx];
+                var vertex = new THREE.Vector3(pos.getX(vi), pos.getY(vi), pos.getZ(vi));
                 var localPos = vertex.clone().sub(faceCenters[faceIdx]);
                 uvs[vi * 2] = 0.5 + localPos.dot(faceTangents[faceIdx]) * 0.4;
                 uvs[vi * 2 + 1] = 0.5 + localPos.dot(faceBitangents[faceIdx]) * 0.4;
             }
-            niGeo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+            geo.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 
             // Build materials
             var materials = themes.map(function(theme, idx) {
@@ -543,10 +579,10 @@
                 return new THREE.MeshLambertMaterial({ map: texture, side: THREE.FrontSide });
             });
 
-            var mesh = new THREE.Mesh(niGeo, materials);
+            var mesh = new THREE.Mesh(geo, materials);
             mesh.userData.faceCenters = faceCenters;
             mesh.userData.faceNormals = dodecaNormals;
-            mesh.userData.triToFace = sortedTriToFace;
+            mesh.userData.triToFace = triToFace;
             return mesh;
         }
 
