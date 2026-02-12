@@ -1,0 +1,700 @@
+{
+  "version": "0.4",
+  "title": "Servizi Psicologici - Consulenza e Formazione",
+  "type": "page",
+  "page_settings": {
+    "background_background": "classic",
+    "background_color": "#f7f7f6"
+  },
+  "content": [
+
+    {
+      "id": "s1000001",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "padding": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": true},
+        "margin": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": true}
+      },
+      "elements": [
+        {
+          "id": "k1000001",
+          "elType": "column",
+          "isInner": false,
+          "settings": {"_column_size": 100},
+          "elements": [
+            {
+              "id": "w1000001",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<style>\n/* === Servizi - Elementor Custom Styles === */\n\n/* Hero gradient overlay */\n.sv-hero-section { position: relative !important; }\n.sv-hero-section > .elementor-container { position: relative; z-index: 2; }\n.sv-hero-section > .elementor-background-overlay ~ .elementor-container { z-index: 2; }\n\n/* Service cards */\n.sv-cards .sv-card {\n  background: #fff; padding: 32px; border-radius: 12px;\n  border: 1px solid #f0f0f0; display: flex; gap: 24px;\n  align-items: flex-start; transition: all 0.3s ease; margin-bottom: 28px;\n}\n.sv-cards .sv-card:last-child { margin-bottom: 0; }\n.sv-cards .sv-card:hover { border-color: rgba(178,152,108,0.3); box-shadow: 0 4px 20px rgba(0,0,0,0.06); }\n.sv-card-num { font-family: 'Source Serif Pro', serif; font-size: 36px; color: rgba(178,152,108,0.5); font-weight: 300; line-height: 1; flex-shrink: 0; }\n.sv-card h3 { font-family: 'Source Serif Pro', serif; font-size: 22px; color: #1a1a1a; margin: 0 0 12px 0; transition: color 0.3s ease; font-weight: 400; }\n.sv-cards .sv-card:hover h3 { color: #b2986c; }\n.sv-card p { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 300; color: #555; line-height: 1.7; margin: 0; }\n\n/* Accordion overrides */\n.sv-accordion .elementor-accordion-item { background: #f7f7f6 !important; border-radius: 8px !important; margin-bottom: 12px !important; border: 1px solid transparent !important; transition: border-color 0.3s ease !important; overflow: hidden; }\n.sv-accordion .elementor-accordion-item:hover { border-color: rgba(178,152,108,0.2) !important; }\n.sv-accordion .elementor-tab-title { padding: 20px 24px !important; }\n.sv-accordion .elementor-tab-content { padding: 0 24px 20px !important; border-top: 1px solid rgba(178,152,108,0.05); }\n\n/* Corporate grid */\n.sv-corp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }\n.sv-corp-item .sv-corp-icon {\n  width: 56px; height: 56px; background: rgba(178,152,108,0.1);\n  border-radius: 50%; display: flex; align-items: center;\n  justify-content: center; margin-bottom: 20px; transition: background 0.3s ease;\n}\n.sv-corp-item:hover .sv-corp-icon { background: rgba(178,152,108,0.2); }\n.sv-corp-item h4 { font-family: 'Source Serif Pro', serif; font-size: 18px; font-weight: 500; color: #1a1a1a; margin: 0 0 16px 0; }\n.sv-corp-item ul { list-style: none; padding: 0; margin: 0; }\n.sv-corp-item li { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300; color: #555; padding: 4px 0; display: flex; align-items: center; gap: 8px; }\n.sv-corp-item li::before { content: ''; width: 4px; height: 4px; background: #b2986c; border-radius: 50%; flex-shrink: 0; }\n\n/* Quote decorative corners */\n.sv-quote-section { position: relative !important; overflow: hidden !important; }\n.sv-quote-section::before { content: ''; position: absolute; top: 40px; left: 40px; width: 128px; height: 128px; border-left: 1px solid rgba(178,152,108,0.2); border-top: 1px solid rgba(178,152,108,0.2); pointer-events: none; }\n.sv-quote-section::after { content: ''; position: absolute; bottom: 40px; right: 40px; width: 128px; height: 128px; border-right: 1px solid rgba(178,152,108,0.2); border-bottom: 1px solid rgba(178,152,108,0.2); pointer-events: none; }\n.sv-quote-section > .elementor-container { position: relative; z-index: 1; }\n\n/* Neuropsych timeline */\n.sv-neuro-tl { border-left: 2px solid rgba(178,152,108,0.2); padding-left: 32px; }\n.sv-neuro-step { position: relative; margin-bottom: 32px; }\n.sv-neuro-step:last-child { margin-bottom: 0; }\n.sv-neuro-step::before { content: ''; position: absolute; left: -41px; top: 4px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #b2986c; background: #f7f7f6; }\n.sv-neuro-step h3 { font-family: 'Source Serif Pro', serif; font-size: 18px; font-weight: 500; color: #1a1a1a; margin: 0 0 8px 0; }\n.sv-neuro-step p { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 300; color: #555; line-height: 1.65; margin: 0; }\n\n/* Concluding quote card */\n.sv-conclude-card .elementor-widget-container {\n  background: #f7f7f7; border-radius: 12px; padding: 48px 64px;\n  border: 1px solid #f0f0f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); text-align: center;\n}\n\n/* Footer */\n.sv-footer-links a { color: #a0a0a0; text-decoration: none; transition: color 0.3s ease; margin-left: 24px; font-family: 'Inter', sans-serif; font-size: 13px; }\n.sv-footer-links a:hover { color: #b2986c; }\n\n/* Responsive */\n@media(max-width:767px) {\n  .sv-cards .sv-card { flex-direction: column; padding: 24px; gap: 16px; }\n  .sv-corp-grid { grid-template-columns: 1fr; gap: 32px; }\n  .sv-conclude-card .elementor-widget-container { padding: 28px 20px; }\n  .sv-quote-section::before { top: 20px; left: 20px; width: 60px; height: 60px; }\n  .sv-quote-section::after { bottom: 20px; right: 20px; width: 60px; height: 60px; }\n}\n@media(min-width:768px) and (max-width:1024px) {\n  .sv-corp-grid { grid-template-columns: repeat(2, 1fr); }\n}\n</style>"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000002",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "css_classes": "sv-hero-section",
+        "height": "min-height",
+        "custom_height": {"unit": "vh", "size": 60},
+        "content_position": "middle",
+        "overflow": "hidden",
+        "background_background": "classic",
+        "background_image": {"url": "https://lh3.googleusercontent.com/aida-public/AB6AXuD-3-YFtupmenUAGpiA7vhpHLq4LvZ3N-3AsIxOtCIiIbxyfD7prbc-vkkd8Unb3hSoo_m3GTrsTnvr53h5BRi4D_WTLX9LfBb8XvrxU8RQhXbnLQqjQ2CztrHdaK3Y5DFVipHFkL9SpdKIx4XHLmkNpGSNdlcugPrZAr6qovNpTFGmEXVFJXGlMXHJuBvgwOLzgRql5IBc1QNFHaTMThj3tzQcf6FDh75cwAws5YoqgLcYRsHDYMwpinK6yDlO3pIkwFMr_qgw2bQ", "id": ""},
+        "background_position": "center center",
+        "background_size": "cover",
+        "padding": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000002",
+          "elType": "column",
+          "isInner": false,
+          "settings": {"_column_size": 100},
+          "elements": [
+            {
+              "id": "w1000002",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Servizi Psicologici",
+                "header_size": "h1",
+                "align": "center",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 64},
+                "typography_font_size_tablet": {"unit": "px", "size": 48},
+                "typography_font_size_mobile": {"unit": "px", "size": 38},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.15},
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "12", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000003",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Consulenza e Formazione",
+                "header_size": "p",
+                "align": "center",
+                "title_color": "#555555",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 18},
+                "typography_font_size_mobile": {"unit": "px", "size": 16},
+                "typography_font_weight": "300",
+                "typography_letter_spacing": {"unit": "px", "size": 2},
+                "typography_text_transform": "uppercase",
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000004",
+              "elType": "widget",
+              "widgetType": "divider",
+              "isInner": false,
+              "settings": {
+                "style": "solid",
+                "weight": {"unit": "px", "size": 2},
+                "width": {"unit": "px", "size": 96},
+                "color": "#b2986c",
+                "gap": {"unit": "px", "size": 0},
+                "align": "center",
+                "_animation": "fadeInUp",
+                "_animation_delay": 200,
+                "_margin": {"unit": "px", "top": "28", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000003",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "structure": "22",
+        "gap": "extended",
+        "content_position": "top",
+        "background_background": "classic",
+        "background_color": "#f7f7f6",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000003",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 66,
+            "_inline_size": 33,
+            "padding": {"unit": "px", "top": "8", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "w1000005",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Per Privati",
+                "header_size": "h2",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 38},
+                "typography_font_size_mobile": {"unit": "px", "size": 30},
+                "typography_font_weight": "400",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "20", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000006",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Percorsi terapeutici individualizzati volti a promuovere il benessere psicologico e la crescita personale.</p>",
+                "text_color": "#555555",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 15},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.7},
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "28", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000007",
+              "elType": "widget",
+              "widgetType": "divider",
+              "isInner": false,
+              "settings": {
+                "style": "solid",
+                "weight": {"unit": "px", "size": 2},
+                "width": {"unit": "px", "size": 48},
+                "color": "rgba(178,152,108,0.3)",
+                "gap": {"unit": "px", "size": 0},
+                "align": "left",
+                "hide_mobile": "hidden-phone"
+              },
+              "elements": []
+            }
+          ]
+        },
+        {
+          "id": "k1000004",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 33,
+            "_inline_size": 67
+          },
+          "elements": [
+            {
+              "id": "w1000008",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<div class='sv-cards'>\n<div class='sv-card'>\n<span class='sv-card-num'>01</span>\n<div>\n<h3>Psicoterapia Individuale</h3>\n<p>Uno spazio sicuro per esplorare s\u00e9 stessi, gestire l\u2019ansia, la depressione o momenti di crisi. Il percorso \u00e8 cucito su misura per rispondere alle esigenze specifiche della persona.</p>\n</div>\n</div>\n<div class='sv-card'>\n<span class='sv-card-num'>02</span>\n<div>\n<h3>Terapia di Coppia</h3>\n<p>Interventi mirati a migliorare la comunicazione, risolvere conflitti e ritrovare un equilibrio relazionale soddisfacente per entrambi i partner.</p>\n</div>\n</div>\n<div class='sv-card'>\n<span class='sv-card-num'>03</span>\n<div>\n<h3>Consulenza Online</h3>\n<p>Supporto psicologico accessibile ovunque ti trovi, mantenendo gli stessi standard clinici e la stessa riservatezza delle sedute in studio.</p>\n</div>\n</div>\n</div>",
+                "_animation": "fadeInUp",
+                "_animation_delay": 200
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000004",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#ffffff",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000005",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "120", "bottom": "0", "left": "120", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "40", "bottom": "0", "left": "40", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "w1000009",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Corporate",
+                "header_size": "h6",
+                "align": "center",
+                "title_color": "#b2986c",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 13},
+                "typography_font_weight": "600",
+                "typography_letter_spacing": {"unit": "px", "size": 3},
+                "typography_text_transform": "uppercase",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "8", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w100000a",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Per Aziende",
+                "header_size": "h2",
+                "align": "center",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 38},
+                "typography_font_size_mobile": {"unit": "px", "size": 30},
+                "typography_font_weight": "400",
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w100000b",
+              "elType": "widget",
+              "widgetType": "spacer",
+              "isInner": false,
+              "settings": {
+                "space": {"unit": "px", "size": 48},
+                "space_mobile": {"unit": "px", "size": 32}
+              },
+              "elements": []
+            },
+            {
+              "id": "w100000c",
+              "elType": "widget",
+              "widgetType": "accordion",
+              "isInner": false,
+              "settings": {
+                "tabs": [
+                  {
+                    "tab_title": "Workshop Formativi",
+                    "tab_content": "<p>Percorsi formativi progettati per potenziare le competenze trasversali dei team. Attraverso metodologie attive e partecipative, i workshop mirano a sviluppare leadership, intelligenza emotiva e gestione del cambiamento.</p>",
+                    "_id": "acc00001"
+                  },
+                  {
+                    "tab_title": "Consulenza Diversity & Inclusion",
+                    "tab_content": "<p>Supporto strategico per creare ambienti di lavoro inclusivi. Interventi mirati a valorizzare le differenze, ridurre i bias cognitivi e promuovere una cultura aziendale basata sul rispetto e sull\u2019equit\u00e0.</p>",
+                    "_id": "acc00002"
+                  }
+                ],
+                "selected_icon": {"value": "fas fa-chevron-down", "library": "fa-solid"},
+                "selected_active_icon": {"value": "fas fa-chevron-up", "library": "fa-solid"},
+                "title_color": "#1a1a1a",
+                "title_background": "",
+                "content_color": "#555555",
+                "border_color": "transparent",
+                "title_typography_typography": "custom",
+                "title_typography_font_family": "Source Serif Pro",
+                "title_typography_font_size": {"unit": "px", "size": 22},
+                "title_typography_font_size_mobile": {"unit": "px", "size": 18},
+                "title_typography_font_weight": "400",
+                "content_typography_typography": "custom",
+                "content_typography_font_family": "Inter",
+                "content_typography_font_size": {"unit": "px", "size": 15},
+                "content_typography_font_weight": "300",
+                "content_typography_line_height": {"unit": "em", "size": 1.75},
+                "_css_classes": "sv-accordion",
+                "_animation": "fadeInUp",
+                "_animation_delay": 200
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000005",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#f7f7f6",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000006",
+          "elType": "column",
+          "isInner": false,
+          "settings": {"_column_size": 100},
+          "elements": [
+            {
+              "id": "w100000d",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<div class='sv-corp-grid'>\n<div class='sv-corp-item'>\n<div class='sv-corp-icon'><i class='fas fa-spa' style='color:#b2986c;font-size:24px;'></i></div>\n<h4>Gestione dello Stress</h4>\n<ul><li>Prevenzione del Burnout</li><li>Tecniche di rilassamento</li><li>Work-life balance</li></ul>\n</div>\n<div class='sv-corp-item'>\n<div class='sv-corp-icon'><i class='fas fa-comments' style='color:#b2986c;font-size:24px;'></i></div>\n<h4>Comunicazione Efficace</h4>\n<ul><li>Assertivit\u00e0</li><li>Feedback costruttivi</li><li>Gestione dei conflitti</li></ul>\n</div>\n<div class='sv-corp-item'>\n<div class='sv-corp-icon'><i class='fas fa-users' style='color:#b2986c;font-size:24px;'></i></div>\n<h4>Team Building</h4>\n<ul><li>Coesione di gruppo</li><li>Fiducia reciproca</li><li>Collaborazione attiva</li></ul>\n</div>\n<div class='sv-corp-item'>\n<div class='sv-corp-icon'><i class='fas fa-headset' style='color:#b2986c;font-size:24px;'></i></div>\n<h4>Gruppi di Supporto</h4>\n<ul><li>Ascolto attivo</li><li>Condivisione esperienze</li><li>Supporto emotivo</li></ul>\n</div>\n<div class='sv-corp-item'>\n<div class='sv-corp-icon'><i class='fas fa-brain' style='color:#b2986c;font-size:24px;'></i></div>\n<h4>Soft Skills</h4>\n<ul><li>Intelligenza Emotiva</li><li>Problem Solving</li><li>Adattabilit\u00e0</li></ul>\n</div>\n</div>",
+                "_animation": "fadeInUp"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000006",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "css_classes": "sv-quote-section",
+        "background_background": "classic",
+        "background_color": "#f7f7f6",
+        "padding": {"unit": "px", "top": "130", "right": "0", "bottom": "130", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000007",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "160", "bottom": "0", "left": "160", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "60", "bottom": "0", "left": "60", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "w100000e",
+              "elType": "widget",
+              "widgetType": "icon",
+              "isInner": false,
+              "settings": {
+                "selected_icon": {"value": "fas fa-quote-left", "library": "fa-solid"},
+                "view": "default",
+                "align": "center",
+                "primary_color": "rgba(178,152,108,0.2)",
+                "size": {"unit": "px", "size": 48},
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "24", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w100000f",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "\u201cOgni paziente deve essere trattato come un individuo unico; la terapia deve essere creata su misura.\u201d",
+                "header_size": "h3",
+                "align": "center",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 32},
+                "typography_font_size_tablet": {"unit": "px", "size": 26},
+                "typography_font_size_mobile": {"unit": "px", "size": 22},
+                "typography_font_weight": "400",
+                "typography_font_style": "italic",
+                "typography_line_height": {"unit": "em", "size": 1.4},
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "28", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000010",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "\u2014 Irvin D. Yalom",
+                "header_size": "p",
+                "align": "center",
+                "title_color": "#b2986c",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 13},
+                "typography_font_weight": "600",
+                "typography_letter_spacing": {"unit": "px", "size": 2},
+                "typography_text_transform": "uppercase",
+                "_animation": "fadeInUp",
+                "_animation_delay": 100
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000007",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#f7f7f6",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000008",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "160", "bottom": "0", "left": "160", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "40", "bottom": "0", "left": "40", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "w1000011",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Valutazioni Neuropsicologiche",
+                "header_size": "h2",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 32},
+                "typography_font_size_mobile": {"unit": "px", "size": 26},
+                "typography_font_weight": "400",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "16", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000012",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Un approccio strutturato e rigoroso per la diagnosi e la riabilitazione delle funzioni cognitive.</p>",
+                "text_color": "#555555",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 15},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.7},
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "40", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000013",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<div class='sv-neuro-tl'>\n<div class='sv-neuro-step'><h3>1. Screening Iniziale</h3><p>Colloquio preliminare per raccogliere l\u2019anamnesi e identificare le aree di indagine.</p></div>\n<div class='sv-neuro-step'><h3>2. Valutazione Psicometrica</h3><p>Somministrazione di test standardizzati per misurare le funzioni cognitive specifiche.</p></div>\n<div class='sv-neuro-step'><h3>3. Diagnosi Funzionale</h3><p>Analisi dei risultati per delineare il profilo cognitivo del paziente.</p></div>\n<div class='sv-neuro-step'><h3>4. Restituzione</h3><p>Incontro dedicato alla spiegazione chiara e dettagliata dei risultati emersi.</p></div>\n<div class='sv-neuro-step'><h3>5. Progettazione Riabilitativa</h3><p>Definizione di un piano di trattamento personalizzato basato sulle risorse residue.</p></div>\n<div class='sv-neuro-step'><h3>6. Trattamento</h3><p>Sessioni di stimolazione cognitiva e training per il recupero funzionale.</p></div>\n<div class='sv-neuro-step'><h3>7. Follow-up</h3><p>Monitoraggio periodico per valutare l\u2019efficacia dell\u2019intervento e i progressi.</p></div>\n</div>",
+                "_animation": "fadeInUp",
+                "_animation_delay": 200
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000008",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#f7f7f6",
+        "padding": {"unit": "px", "top": "40", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "20", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k1000009",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "120", "bottom": "0", "left": "120", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "40", "bottom": "0", "left": "40", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "w1000014",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<div style='background:#f7f7f7;border-radius:12px;padding:48px 64px;border:1px solid #f0f0f0;box-shadow:inset 0 2px 4px rgba(0,0,0,0.02);text-align:center;'>\n<p style='font-family:Source Serif Pro,serif;font-size:22px;color:#555;font-style:italic;line-height:1.8;margin:0 0 28px 0;'>\u201cAscoltare \u00e8 una cosa magnetica e strana, una forza creativa. Gli amici che ci ascoltano sono quelli a cui ci avviciniamo. Quando siamo ascoltati, questo ci crea, ci fa aprire ed espandere.\u201d</p>\n<div style='color:#b2986c;font-family:Inter,sans-serif;font-weight:500;font-size:13px;text-transform:uppercase;letter-spacing:0.1em;'>\u2014 G. Marchioro</div>\n</div>",
+                "_animation": "fadeInUp"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "s1000009",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "structure": "20",
+        "background_background": "classic",
+        "background_color": "#1a1a1a",
+        "border_border": "solid",
+        "border_width": {"unit": "px", "top": "4", "right": "0", "bottom": "0", "left": "0", "isLinked": false},
+        "border_color": "#b2986c",
+        "padding": {"unit": "px", "top": "48", "right": "0", "bottom": "48", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "k100000a",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "content_position": "center"
+          },
+          "elements": [
+            {
+              "id": "w1000015",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Dr. Rossi",
+                "header_size": "h5",
+                "title_color": "#ffffff",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 24},
+                "typography_font_weight": "400",
+                "align_mobile": "center",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "8", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000016",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Psicologo e Psicoterapeuta</p>",
+                "text_color": "#9ca3af",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 13},
+                "typography_font_weight": "300",
+                "align_mobile": "center",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "12", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "w1000017",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Iscrizione Albo n. 12345</p>",
+                "text_color": "#6b7280",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 11},
+                "typography_font_weight": "300",
+                "align_mobile": "center"
+              },
+              "elements": []
+            }
+          ]
+        },
+        {
+          "id": "k100000b",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "content_position": "center"
+          },
+          "elements": [
+            {
+              "id": "w1000018",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<div style='text-align:right;' class='sv-footer-links'><a href='#'>Privacy Policy</a><a href='#'>Cookie Policy</a><a href='#'>Contatti</a></div>",
+                "_css_classes": "sv-footer-links"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

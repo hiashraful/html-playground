@@ -1,0 +1,766 @@
+{
+  "version": "0.4",
+  "title": "Chi Sono - Nuova Pagina",
+  "type": "page",
+  "page_settings": [],
+  "content": [
+
+    {
+      "id": "a0000001",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "padding": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": true},
+        "margin": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": true}
+      },
+      "elements": [
+        {
+          "id": "b0000001",
+          "elType": "column",
+          "isInner": false,
+          "settings": {"_column_size": 100},
+          "elements": [
+            {
+              "id": "c0000001",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<style>\n/* === Chi Sono v2 - Elementor Custom Styles === */\n\n/* Hero image overlay */\n.chi2-hero-img-col > .elementor-widget-wrap,\n.chi2-hero-img-col > .elementor-element-populated { position: relative; }\n.chi2-hero-img-col > .elementor-widget-wrap::after,\n.chi2-hero-img-col > .elementor-element-populated::after {\n  content: ''; position: absolute; inset: 0;\n  background: rgba(0,0,0,0.1); pointer-events: none; z-index: 1;\n}\n\n/* Hero H1 two-tone */\n.chi2-hero-h1 .elementor-widget-container h1 {\n  font-family: 'Source Serif Pro', serif;\n  font-size: 56px; font-weight: 400; line-height: 1.1;\n  color: #1a1a1a; margin: 0; letter-spacing: -0.5px;\n}\n.chi2-hero-h1 .elementor-widget-container h1 span {\n  font-style: italic; color: #9ca3af;\n}\n\n/* Identity icon circle */\n.chi2-identity-icon .elementor-icon {\n  background: rgba(178,149,108,0.1) !important;\n  border-radius: 50% !important;\n}\n\n/* Approach H2 with italic span */\n.chi2-approach-h2 .elementor-widget-container h2 {\n  font-family: 'Source Serif Pro', serif;\n  font-size: 40px; font-weight: 400; line-height: 1.25;\n  color: #1a1a1a; text-align: center; margin: 0;\n}\n.chi2-approach-h2 .elementor-widget-container h2 span {\n  font-style: italic; color: #6b7280;\n}\n\n/* Approach strong tags */\n.chi2-approach-text .elementor-widget-container strong {\n  color: #b2956c; font-weight: 500;\n}\n\n/* Communication image rounded + overlay */\n.chi2-comm-img .elementor-widget-container {\n  position: relative; overflow: hidden; border-radius: 8px;\n}\n.chi2-comm-img .elementor-widget-container::after {\n  content: ''; position: absolute; inset: 0;\n  background: rgba(178,149,108,0.1); mix-blend-mode: multiply;\n  pointer-events: none;\n}\n.chi2-comm-img img { border-radius: 8px; }\n\n/* CTA button hover */\n.chi2-cta-btn .elementor-button {\n  transition: all 0.3s ease !important;\n  box-shadow: 0 10px 25px rgba(178,149,108,0.2) !important;\n}\n.chi2-cta-btn .elementor-button:hover {\n  transform: scale(1.05) !important;\n  box-shadow: 0 15px 35px rgba(178,149,108,0.3) !important;\n}\n\n/* Footer links */\n.chi2-footer-links .elementor-widget-container a {\n  color: #9ca3af; text-decoration: none; transition: color 0.3s ease;\n}\n.chi2-footer-links .elementor-widget-container a:hover { color: #b2956c; }\n\n/* Responsive */\n@media(max-width:767px) {\n  .chi2-comm-section > .elementor-container { display: flex; flex-direction: column; }\n  .chi2-comm-text-col { order: 2; }\n  .chi2-comm-img-col { order: 1; }\n  .chi2-hero-h1 .elementor-widget-container h1 { font-size: 36px; }\n  .chi2-approach-h2 .elementor-widget-container h2 { font-size: 28px; }\n}\n@media(min-width:768px) and (max-width:1024px) {\n  .chi2-hero-h1 .elementor-widget-container h1 { font-size: 44px; }\n  .chi2-approach-h2 .elementor-widget-container h2 { font-size: 32px; }\n}\n</style>"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000002",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "structure": "20",
+        "height": "min-height",
+        "custom_height": {"unit": "vh", "size": 100},
+        "content_position": "middle",
+        "gap": "no",
+        "padding": {"unit": "px", "top": "80", "right": "0", "bottom": "0", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b0000002",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "css_classes": "chi2-hero-img-col",
+            "background_background": "classic",
+            "background_image": {"url": "https://lh3.googleusercontent.com/aida-public/AB6AXuAPXOHcp1O6bJbEZk18qR0aRGQKetMNkD1F5-DYNGOOKFxuZTpAhyE9a_JPyHpnivU4ZfhQQOg_pCX8m6plzlIfID6oMC_JxdKTPy7KoQ9akTl10HOtfpLPmJphil0nbYDzIB2GaHUTqZurw5jqJpDhEv6I8Ney4O2zvMhSIi4FbJvZSDDEKO2LOFGOfV3qDYAvUcshenohQigOEmAc0JVfiIwM4jdGakzdVMpBs6F4ROiiCazNlUbEk-oVSQE5RSVVJWhAxJlSMgQ", "id": ""},
+            "background_position": "top center",
+            "background_size": "cover"
+          },
+          "elements": [
+            {
+              "id": "c0000002",
+              "elType": "widget",
+              "widgetType": "spacer",
+              "isInner": false,
+              "settings": {
+                "space": {"unit": "px", "size": 50}
+              },
+              "elements": []
+            }
+          ]
+        },
+        {
+          "id": "b0000003",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "content_position": "center",
+            "padding": {"unit": "px", "top": "40", "right": "60", "bottom": "40", "left": "60", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "40", "right": "40", "bottom": "40", "left": "40", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "40", "right": "24", "bottom": "40", "left": "24", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "c0000003",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Benvenuta",
+                "header_size": "h6",
+                "title_color": "#b2956c",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 14},
+                "typography_font_weight": "500",
+                "typography_letter_spacing": {"unit": "px", "size": 3},
+                "typography_text_transform": "uppercase",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "16", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000004",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<h1>Psicologa e<br><span>Psicoterapeuta</span></h1>",
+                "_css_classes": "chi2-hero-h1",
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "28", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000005",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Accompagno le persone nella riscoperta delle proprie risorse interiori, promuovendo un cambiamento consapevole e duraturo.",
+                "header_size": "h2",
+                "title_color": "#374151",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 20},
+                "typography_font_size_tablet": {"unit": "px", "size": 18},
+                "typography_font_size_mobile": {"unit": "px", "size": 17},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.6},
+                "_animation": "fadeInUp",
+                "_animation_delay": 200,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "28", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000006",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Il mio lavoro si fonda sull\u2019ascolto empatico e su metodologie scientificamente validate. Credo che ogni percorso terapeutico sia un viaggio unico, dove la relazione umana \u00e8 il primo strumento di cura.</p>",
+                "text_color": "#6b7280",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 15},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.75},
+                "_animation": "fadeInUp",
+                "_animation_delay": 300
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000003",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#ffffff",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b0000004",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "160", "bottom": "0", "left": "160", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "40", "bottom": "0", "left": "40", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "c0000007",
+              "elType": "widget",
+              "widgetType": "icon",
+              "isInner": false,
+              "settings": {
+                "selected_icon": {"value": "fas fa-brain", "library": "fa-solid"},
+                "view": "stacked",
+                "shape": "circle",
+                "primary_color": "#b2956c",
+                "secondary_color": "rgba(178,149,108,0.1)",
+                "size": {"unit": "px", "size": 28},
+                "align": "center",
+                "_css_classes": "chi2-identity-icon",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "28", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000008",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Chi sono professionalmente",
+                "header_size": "h2",
+                "align": "center",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 40},
+                "typography_font_size_tablet": {"unit": "px", "size": 32},
+                "typography_font_size_mobile": {"unit": "px", "size": 28},
+                "typography_font_weight": "400",
+                "typography_line_height": {"unit": "em", "size": 1.2},
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "32", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000009",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Sono iscritta all\u2019Ordine degli Psicologi della Lombardia e specializzata in Psicoterapia Cognitivo-Comportamentale. La mia formazione accademica si intreccia con una continua ricerca sul campo, focalizzata sul benessere psicologico integrato.</p>",
+                "align": "center",
+                "text_color": "#4b5563",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 17},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.8},
+                "_animation": "fadeInUp",
+                "_animation_delay": 200,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "16", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c000000a",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Oltre alla pratica clinica, mi dedico allo studio delle nuove tecnologie applicate alla psicologia, credendo fermamente che l\u2019innovazione possa essere un alleato prezioso nel percorso di cura.</p>",
+                "align": "center",
+                "text_color": "#4b5563",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 17},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.8},
+                "_animation": "fadeInUp",
+                "_animation_delay": 300
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000004",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#f7f7f7",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b0000005",
+          "elType": "column",
+          "isInner": false,
+          "settings": {"_column_size": 100},
+          "elements": [
+            {
+              "id": "c000000b",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Esperienza Clinica",
+                "header_size": "h3",
+                "align": "center",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 28},
+                "typography_font_size_mobile": {"unit": "px", "size": 24},
+                "typography_font_weight": "400",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c000000c",
+              "elType": "widget",
+              "widgetType": "spacer",
+              "isInner": false,
+              "settings": {
+                "space": {"unit": "px", "size": 60},
+                "space_tablet": {"unit": "px", "size": 40},
+                "space_mobile": {"unit": "px", "size": 30}
+              },
+              "elements": []
+            },
+            {
+              "id": "c000000d",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<style>\n.chi2-tl { position: relative; padding: 0 20px; max-width: 900px; margin: 0 auto; }\n.chi2-tl::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(178,149,108,0.3); transform: translateX(-50%); }\n.chi2-tl-item { position: relative; display: flex; align-items: flex-start; margin-bottom: 60px; }\n.chi2-tl-item:last-child { margin-bottom: 0; }\n.chi2-tl-dot { position: absolute; left: 50%; top: 4px; width: 16px; height: 16px; background: #b2956c; border-radius: 50%; border: 4px solid #f7f7f7; transform: translateX(-50%); z-index: 2; }\n.chi2-tl-date-side { width: 50%; box-sizing: border-box; }\n.chi2-tl-content-side { width: 50%; box-sizing: border-box; }\n.chi2-tl-right .chi2-tl-date-side { text-align: right; padding-right: 40px; }\n.chi2-tl-right .chi2-tl-content-side { padding-left: 40px; }\n.chi2-tl-left .chi2-tl-content-side { text-align: right; padding-right: 40px; }\n.chi2-tl-left .chi2-tl-date-side { padding-left: 40px; }\n.chi2-tl-date { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; color: #b2956c; text-transform: uppercase; letter-spacing: 0.1em; padding-top: 2px; }\n.chi2-tl-title { font-family: 'Source Serif Pro', serif; font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0; line-height: 1.3; }\n.chi2-tl-desc { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 300; color: #4b5563; line-height: 1.7; margin: 0; }\n@media(max-width:767px) {\n  .chi2-tl { padding: 0; }\n  .chi2-tl::before { left: 8px; }\n  .chi2-tl-item { display: flex; flex-direction: column; padding-left: 32px; }\n  .chi2-tl-dot { left: 8px; top: 0; }\n  .chi2-tl-date-side, .chi2-tl-content-side { width: 100%; text-align: left !important; padding: 0 !important; }\n  .chi2-tl-date-side { order: -1; margin-bottom: 4px; }\n}\n</style>\n<div class='chi2-tl'>\n<div class='chi2-tl-item chi2-tl-right'>\n<div class='chi2-tl-date-side'><span class='chi2-tl-date'>Dal 2020 ad oggi</span></div>\n<div class='chi2-tl-dot'></div>\n<div class='chi2-tl-content-side'><h4 class='chi2-tl-title'>Online Psychology</h4><p class='chi2-tl-desc'>Supporto psicologico a distanza per pazienti residenti all\u2019estero e in Italia, utilizzando piattaforme sicure per garantire continuit\u00e0 terapeutica.</p></div>\n</div>\n<div class='chi2-tl-item chi2-tl-left'>\n<div class='chi2-tl-content-side'><h4 class='chi2-tl-title'>Ospedale Maria Luigia</h4><p class='chi2-tl-desc'>Collaborazione nel reparto di riabilitazione psichiatrica, con focus su disturbi dell\u2019umore e gestione dell\u2019ansia in contesto residenziale.</p></div>\n<div class='chi2-tl-dot'></div>\n<div class='chi2-tl-date-side'><span class='chi2-tl-date'>2018 - 2020</span></div>\n</div>\n<div class='chi2-tl-item chi2-tl-right'>\n<div class='chi2-tl-date-side'><span class='chi2-tl-date'>2016 - 2018</span></div>\n<div class='chi2-tl-dot'></div>\n<div class='chi2-tl-content-side'><h4 class='chi2-tl-title'>Ospedale Niguarda</h4><p class='chi2-tl-desc'>Tirocinio di specializzazione presso il servizio di Psicologia Clinica, partecipando a gruppi di supporto e valutazioni psicodiagnostiche.</p></div>\n</div>\n<div class='chi2-tl-item chi2-tl-left'>\n<div class='chi2-tl-content-side'><h4 class='chi2-tl-title'>Videogame Therapy</h4><p class='chi2-tl-desc'>Approfondimento sull\u2019uso terapeutico dei videogiochi come strumento proiettivo e di regolazione emotiva per adolescenti e giovani adulti.</p></div>\n<div class='chi2-tl-dot'></div>\n<div class='chi2-tl-date-side'><span class='chi2-tl-date'>Ricerca e Sviluppo</span></div>\n</div>\n</div>",
+                "_animation": "fadeInUp",
+                "_animation_delay": 100
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000005",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#f7f7f7",
+        "border_border": "solid",
+        "border_width": {"unit": "px", "top": "1", "right": "0", "bottom": "1", "left": "0", "isLinked": false},
+        "border_color": "rgba(0,0,0,0.06)",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b0000006",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "200", "bottom": "0", "left": "200", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "60", "bottom": "0", "left": "60", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "c000000e",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Metodologia",
+                "header_size": "h6",
+                "align": "center",
+                "title_color": "#b2956c",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 12},
+                "typography_font_weight": "700",
+                "typography_letter_spacing": {"unit": "px", "size": 3},
+                "typography_text_transform": "uppercase",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "16", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c000000f",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<h2>Un approccio integrato tra<br><span>Mente, Cervello e Relazione</span></h2>",
+                "_css_classes": "chi2-approach-h2",
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "36", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000010",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Utilizzo prevalentemente l\u2019approccio <strong>Cognitivo-Comportamentale (CBT)</strong>, considerato gold standard internazionale per il trattamento di numerosi disturbi psicologici.</p>",
+                "align": "center",
+                "text_color": "#4b5563",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 17},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.75},
+                "_css_classes": "chi2-approach-text",
+                "_animation": "fadeInUp",
+                "_animation_delay": 200,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "20", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000011",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Integro questo modello con recenti scoperte nell\u2019ambito <strong>Neuropsicologico</strong>, per offrire un percorso che non si limiti alla comprensione del sintomo, ma miri a ristrutturare i meccanismi profondi che regolano il nostro benessere emotivo.</p>",
+                "align": "center",
+                "text_color": "#4b5563",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 17},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.75},
+                "_css_classes": "chi2-approach-text",
+                "_animation": "fadeInUp",
+                "_animation_delay": 300
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000006",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "structure": "20",
+        "gap": "extended",
+        "content_position": "middle",
+        "css_classes": "chi2-comm-section",
+        "background_background": "classic",
+        "background_color": "#ffffff",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b0000007",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "_inline_size": 55,
+            "css_classes": "chi2-comm-text-col"
+          },
+          "elements": [
+            {
+              "id": "c0000012",
+              "elType": "widget",
+              "widgetType": "icon-box",
+              "isInner": false,
+              "settings": {
+                "selected_icon": {"value": "fas fa-book-open", "library": "fa-solid"},
+                "view": "default",
+                "title_text": "Divulgazione Scientifica",
+                "description_text": "",
+                "position": "left",
+                "title_size": "h3",
+                "primary_color": "#b2956c",
+                "title_typography_typography": "custom",
+                "title_typography_font_family": "Source Serif Pro",
+                "title_typography_font_size": {"unit": "px", "size": 28},
+                "title_typography_font_size_tablet": {"unit": "px", "size": 24},
+                "title_typography_font_size_mobile": {"unit": "px", "size": 22},
+                "title_typography_font_weight": "400",
+                "title_typography_line_height": {"unit": "em", "size": 1.3},
+                "title_color": "#1a1a1a",
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "24", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000013",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Credo che la psicologia debba essere accessibile. Per questo motivo, dedico parte del mio tempo alla scrittura di articoli divulgativi e alla partecipazione a conferenze.</p>",
+                "text_color": "#4b5563",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 15},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.75},
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "16", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000014",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Il mio obiettivo \u00e8 abbattere lo stigma legato alla salute mentale, offrendo informazioni chiare, basate su evidenze scientifiche, ma comprensibili a tutti. La conoscenza \u00e8 il primo passo verso la consapevolezza.</p>",
+                "text_color": "#4b5563",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 15},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.75},
+                "_animation": "fadeInUp",
+                "_animation_delay": 200,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "20", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000015",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<a href='#' style='color:#b2956c;font-family:Inter,sans-serif;font-weight:500;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:opacity 0.3s ease;'>Leggi le mie pubblicazioni <span style='font-size:18px;transition:transform 0.3s ease;'>&#8594;</span></a>",
+                "_animation": "fadeInUp",
+                "_animation_delay": 300
+              },
+              "elements": []
+            }
+          ]
+        },
+        {
+          "id": "b0000008",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "_inline_size": 45,
+            "css_classes": "chi2-comm-img-col"
+          },
+          "elements": [
+            {
+              "id": "c0000016",
+              "elType": "widget",
+              "widgetType": "image",
+              "isInner": false,
+              "settings": {
+                "image": {"url": "https://lh3.googleusercontent.com/aida-public/AB6AXuBFiwHxtWmQTX9sn0-MFBmdWR2wVerSeKnRqmE-5oxHbAlLH0oiOVxVpUJLRO1P1kwPQaPYElrCN8OVJdfXtv_uCj0lxOGMyZ3yi5ETa9pOayiwnIo-Zj7GMfhef3Z7ea54r2mwL75vF9w__lN6i-ujlff31cF3qz0njZ88iEm3I3IYmPgPxryxeK_dfmNThpmgZ0meSv1IfPrVyKOkhSW_CfPloO7G3FSoDnZUeZBKyVnOW4wUa2RD4E1SqfXK_1GGp0606-jjNF0", "id": ""},
+                "image_size": "full",
+                "width": {"unit": "%", "size": 100},
+                "object-fit": "cover",
+                "_css_classes": "chi2-comm-img",
+                "_animation": "fadeIn"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000007",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "background_background": "classic",
+        "background_color": "#f7f7f7",
+        "padding": {"unit": "px", "top": "100", "right": "0", "bottom": "100", "left": "0", "isLinked": false},
+        "padding_tablet": {"unit": "px", "top": "80", "right": "0", "bottom": "80", "left": "0", "isLinked": false},
+        "padding_mobile": {"unit": "px", "top": "60", "right": "0", "bottom": "60", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b0000009",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 100,
+            "padding": {"unit": "px", "top": "0", "right": "200", "bottom": "0", "left": "200", "isLinked": false},
+            "padding_tablet": {"unit": "px", "top": "0", "right": "60", "bottom": "0", "left": "60", "isLinked": false},
+            "padding_mobile": {"unit": "px", "top": "0", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+          },
+          "elements": [
+            {
+              "id": "c0000017",
+              "elType": "widget",
+              "widgetType": "heading",
+              "isInner": false,
+              "settings": {
+                "title": "Inizia il tuo percorso di benessere",
+                "header_size": "h2",
+                "align": "center",
+                "title_color": "#1a1a1a",
+                "typography_typography": "custom",
+                "typography_font_family": "Source Serif Pro",
+                "typography_font_size": {"unit": "px", "size": 40},
+                "typography_font_size_tablet": {"unit": "px", "size": 32},
+                "typography_font_size_mobile": {"unit": "px", "size": 28},
+                "typography_font_weight": "400",
+                "typography_line_height": {"unit": "em", "size": 1.2},
+                "_animation": "fadeInUp",
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "20", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000018",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Il primo colloquio \u00e8 un momento fondamentale per conoscerci e definire insieme gli obiettivi.</p>",
+                "align": "center",
+                "text_color": "#6b7280",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 15},
+                "typography_font_weight": "300",
+                "typography_line_height": {"unit": "em", "size": 1.7},
+                "_animation": "fadeInUp",
+                "_animation_delay": 100,
+                "_margin": {"unit": "px", "top": "0", "right": "0", "bottom": "36", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            },
+            {
+              "id": "c0000019",
+              "elType": "widget",
+              "widgetType": "button",
+              "isInner": false,
+              "settings": {
+                "text": "Prenota un colloquio",
+                "link": {"url": "#contatti", "is_external": false, "nofollow": false},
+                "align": "center",
+                "size": "md",
+                "background_color": "#b2956c",
+                "button_text_color": "#ffffff",
+                "hover_color": "#ffffff",
+                "button_background_hover_color": "#9a8259",
+                "border_radius": {"unit": "px", "top": "6", "right": "6", "bottom": "6", "left": "6", "isLinked": true},
+                "text_padding": {"unit": "px", "top": "16", "right": "40", "bottom": "16", "left": "40", "isLinked": false},
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 14},
+                "typography_font_weight": "500",
+                "_css_classes": "chi2-cta-btn",
+                "_animation": "fadeInUp",
+                "_animation_delay": 200
+              },
+              "elements": []
+            },
+            {
+              "id": "c000001a",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>Disponibile anche per consulenze online via Skype o Zoom.</p>",
+                "align": "center",
+                "text_color": "#9ca3af",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 12},
+                "typography_font_weight": "300",
+                "_animation": "fadeInUp",
+                "_animation_delay": 300,
+                "_margin": {"unit": "px", "top": "28", "right": "0", "bottom": "0", "left": "0", "isLinked": false}
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "a0000008",
+      "elType": "section",
+      "isInner": false,
+      "settings": {
+        "structure": "20",
+        "background_background": "classic",
+        "background_color": "#ffffff",
+        "border_border": "solid",
+        "border_width": {"unit": "px", "top": "1", "right": "0", "bottom": "0", "left": "0", "isLinked": false},
+        "border_color": "rgba(0,0,0,0.06)",
+        "padding": {"unit": "px", "top": "48", "right": "0", "bottom": "48", "left": "0", "isLinked": false}
+      },
+      "elements": [
+        {
+          "id": "b000000a",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "content_position": "center"
+          },
+          "elements": [
+            {
+              "id": "c000001b",
+              "elType": "widget",
+              "widgetType": "text-editor",
+              "isInner": false,
+              "settings": {
+                "editor": "<p>\u00a9 2023 Dr.ssa Elena Rossi. P.IVA 12345678901.</p>",
+                "text_color": "#9ca3af",
+                "typography_typography": "custom",
+                "typography_font_family": "Inter",
+                "typography_font_size": {"unit": "px", "size": 13},
+                "typography_font_weight": "300",
+                "align_mobile": "center"
+              },
+              "elements": []
+            }
+          ]
+        },
+        {
+          "id": "b000000b",
+          "elType": "column",
+          "isInner": false,
+          "settings": {
+            "_column_size": 50,
+            "content_position": "center"
+          },
+          "elements": [
+            {
+              "id": "c000001c",
+              "elType": "widget",
+              "widgetType": "html",
+              "isInner": false,
+              "settings": {
+                "html": "<div style='text-align:right;font-family:Inter,sans-serif;font-size:13px;font-weight:300;'><a href='#' style='color:#9ca3af;text-decoration:none;transition:color 0.3s;margin-left:24px;'>Privacy Policy</a><a href='#' style='color:#9ca3af;text-decoration:none;transition:color 0.3s;margin-left:24px;'>Cookie Policy</a><a href='#' style='color:#9ca3af;text-decoration:none;transition:color 0.3s;margin-left:24px;'>LinkedIn</a></div>",
+                "_css_classes": "chi2-footer-links"
+              },
+              "elements": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
